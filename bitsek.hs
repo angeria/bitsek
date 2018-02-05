@@ -8,3 +8,5 @@ type Adress = String
 type Balance = Int
 
 -- Wait for it. Bam.
+
+-- Moonshine got me.
