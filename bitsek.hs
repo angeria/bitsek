@@ -20,7 +20,6 @@ data Block = Block { index :: Int
 -- Latest block should be head of list.
 data Blockchain = EmptyBlockchain | Blockchain [Block] deriving (Show)
 
-
 ----------------
 -- BLOCKCHAIN --
 ----------------
