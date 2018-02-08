@@ -10,6 +10,24 @@
 
 -}
 
+data User = User Adress Balance deriving (Show)
+type Adress = String
+type Balance = Int
+
+data Transaction = Transaction Sender Recipient Amount deriving (Show)
+type Sender = String
+type Recipient = String
+type Amount = Int
+
+data Block = Block { index :: Int
+                   , transactions :: [Transaction]
+                -- , proof :: -- Type?
+                -- , previousHash :: Hash
+                   } deriving (Show)
+
+-- Latest block should be head of list.
+data Blockchain = EmptyBlockchain | Blockchain [Block] deriving (Show)
+
 -- UTILITY FUNCTIONS
 
 user :: Adress -> Blockchain -> User
@@ -38,17 +56,33 @@ senders = "fabbe", "benne", "hogge"
 recipients = "benne", "hogge", "benne"
 -}
 
-aggUsers :: Blockchain -> [User]
-aggUsers = undefined
 
-aggTransactions :: Blockchain -> [Transaction]
-aggTransactions (Blockchain []) = []
-aggTransactions (Blockchain (block:blocks)) = transactions block ++ aggTransactions blocks
+allUsers :: Blockchain -> [User]
+allUsers = undefined
 
+-- for now use:
+initUsers = [(User "fabbe" 100), (User "benne" 100), (User "hogge" 100)]
+
+allTransactions :: Blockchain -> [Transaction]
+allTransactions (Blockchain []) = []
+allTransactions (Blockchain (block:blocks)) = transactions block ++ aggTransactions blocks
+
+{- aggUsers users transactions
+
+    PRE: input users list is with starting default values,
+         transaction list contains all transactions
+
+-}
 aggUsers :: [User] -> [Transaction] -> [User]
 aggUsers [] _ = []
 aggUsers (u:us) ts = (aggUser u ts) : (aggUsers us ts)
 
+{- aggUser user transactions
+
+    PRE: input user is with starting default values
+         transaction list contains all transactions
+
+-}
 aggUser :: User -> [Transaction] -> User
 aggUser u [] = u
 aggUser u (t:ts) = aggUser (updateUser u t) ts
