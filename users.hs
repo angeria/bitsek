@@ -24,12 +24,45 @@ findUser ad ((User uad b):us)
 
 -- AGGREGATE DATA 
 
+{-
+Transaction "fabbe" "benne" 10
+Transaction "benne" "hogge" 5
+Transaction "fabbe" "hogge" 20
+Transaction "hogge" "benne" 10
+
+User "fabbe" 100 
+User "benne" 100 
+User "hogge" 100 
+
+senders = "fabbe", "benne", "hogge"
+recipients = "benne", "hogge", "benne"
+-}
+
+aggUsers :: Blockchain -> [User]
+aggUsers = undefined
+
 aggTransactions :: Blockchain -> [Transaction]
 aggTransactions (Blockchain []) = []
 aggTransactions (Blockchain (block:blocks)) = transactions block ++ aggTransactions blocks
 
+aggUsers :: [User] -> [Transaction] -> [User]
+aggUsers [] _ = []
+aggUsers (u:us) ts = (aggUser u ts) : (aggUsers us ts)
+
+aggUser :: User -> [Transaction] -> User
+aggUser u [] = u
+aggUser u (t:ts) = aggUser (updateUser u t) ts
+
+updateUser :: User -> Transaction -> User 
+updateUser (User ad b) (Transaction s r am)
+    | ad == s = (User ad (b-am))
+    | ad == r = (User ad (b+am))
+    | otherwise = (User ad b)
+
+
 -- UPDATE SPECIFIC USERS 
 
+-- not sure if useful, experimenting
 updateSender :: Transaction -> [User] -> User
 updateSender _ [] = (User "not found" 0)
 updateSender (Transaction s _ am) (u:us)
