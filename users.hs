@@ -10,6 +10,8 @@
 
 -}
 
+module Users where
+
 data User = User Adress Balance deriving (Show)
 type Adress = String
 type Balance = Int

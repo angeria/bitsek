@@ -1,6 +1,9 @@
--- Haskell Project: Bitsek 
+---------------------------------------------------------------------
+--                 Haskell Project: Bitsek 						   --
+-- Authors: Benjamin Angeria, Fabian Haglund and Holger Swartling. --
+---------------------------------------------------------------------
 
--- Authors: Benjamin Angeria, Fabian Haglund and Holger Swartling.
+import Users
 
 data User = User Adress Balance deriving (Show)
 type Adress = String
@@ -47,4 +50,3 @@ hashBlock = undefined
 -}
 lastBlock :: Blockchain -> Block
 lastBlock blockchain = case blockchain of Blockchain (x:xs) -> x
-
