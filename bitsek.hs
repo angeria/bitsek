@@ -7,6 +7,7 @@ import Crypto.Hash
 import Data.ByteString (ByteString)
 import qualified Data.ByteString.Char8 as B
 import Data.Binary
+import Data.ByteString.Conversion
 
 data User = User Adress Balance deriving (Show)
 type Adress = String
@@ -21,7 +22,7 @@ type Amount = Int
 data Block = Block { index :: Int 
                    , transactions :: [Transaction]
                    , proof :: Int
-                   , previousHash :: Digest SHA256
+                   , previousHash :: String
                    } deriving (Show)
 
 -- Latest block should be head of list.
@@ -31,24 +32,51 @@ data Blockchain = EmptyBlockchain | Blockchain [Block] deriving (Show)
 -- BLOCKCHAIN --
 ----------------
 
+-- Testing function for blockchain.
+exampleHashWith :: String -> String
+exampleHashWith msg = show $ hashWith SHA256 $ B.pack msg
 
-
--- Testing function
-exampleHashWith :: String -> Digest SHA256
-exampleHashWith msg = hashWith SHA256 $ B.pack msg
 
 -- Testing variables.
 fabbe = User "Fabbe" 100
 benne = User "Benne" 100
 testTransaction = Transaction benne fabbe 100
-testBlock1 = Block {index = 1, transactions = [testTransaction], proof = 0, previousHash = (hashWith SHA256 $ B.pack "test1")}
-testBlock2 = Block {index = 2, transactions = [testTransaction], proof = 1, previousHash = (hashWith SHA256 $ B.pack "test2")}
+testBlock1 = Block {index = 1, transactions = [testTransaction], proof = 0, previousHash = (show $ hashWith SHA256 $ B.pack "test1")}
+testBlock2 = Block {index = 2, transactions = [testTransaction], proof = 1, previousHash = (show $ hashWith SHA256 $ B.pack "test2")}
 testBlockchain = Blockchain [testBlock1, testBlock2]
 
-genesisBlock = Block {index = 0, transactions = [], proof = 0, previousHash = (hashWith SHA256 $ B.pack "genesis")}
+genesisBlock = Block {index = 0, transactions = [], proof = 0, previousHash = (show $ hashWith SHA256 $ B.pack "genesis")}
 
 addToBlockchain :: Blockchain -> [Transaction] -> Blockchain
 addToBlockchain blockchain pendingTransactions = undefined
+
+----------------------------
+-- Proof of Work / Mining --
+----------------------------
+
+{-  mineBlock block
+    Runs a proof of work mechanism on block.
+    RETURNS: Hash beginning with three 0's and a proof.
+-}
+mineBlock :: Block -> (String, Int)
+mineBlock block = mineBlockAux block 0
+
+mineBlockAux :: Block -> Int -> (String, Int)
+mineBlockAux block nonce
+    | head hashResult == '0' 
+        && hashResult !! 1 == '0'
+        && hashResult !! 2 == '0'
+        = (hashResult, nonce)
+    | otherwise = mineBlockAux block (nonce + 1)
+        where
+            hashResult = hashBlock block nonce
+
+{-  hashBlock block nonce
+    Takes a block and a nonce and returns the hash of it.
+-}
+hashBlock :: Block -> Int -> String
+hashBlock block nonce = show $ hashWith SHA256 $ toByteString' $ (nonce + proof block)
+
 
 -- TODO
 {-
@@ -60,15 +88,6 @@ newBlock = undefined
 {-
 proofOfWork :: Blockchain -> Proof
 proofOfWork blockchain = lastblock blockchain
--}
-
--- TODO
-{-  hashBlock block
-    Takes a block and returns the hash of it.
--}
-{-
-hashBlock :: Block -> Hash
-hashBlock = undefined
 -}
 
 {-  lastBlock blockchain 
