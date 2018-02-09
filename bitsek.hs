@@ -6,9 +6,7 @@ data User = User Adress Balance deriving (Show)
 type Adress = String
 type Balance = Int
 
-data Transaction = Transaction Sender Recipient Amount deriving (Show)
-type Sender = String
-type Recipient = String
+data Transaction = Transaction User User Amount deriving (Show)
 type Amount = Int
 
 data Block = Block { index :: Int
