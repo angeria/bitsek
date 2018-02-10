@@ -45,7 +45,7 @@ testBlock1 = Block {index = 1, transactions = [testTransaction], proof = 0, prev
 testBlock2 = Block {index = 2, transactions = [testTransaction], proof = 1, previousHash = (show $ hashWith SHA256 $ B.pack "test2")}
 testBlockchain = Blockchain [testBlock1, testBlock2]
 
-genesisBlock = Block {index = 0, transactions = [], proof = 0, previousHash = (show $ hashWith SHA256 $ B.pack "genesis")}
+genesisBlock = Block {index = 0, transactions = [], proof = 0, previousHash = (show $ hashWith SHA256 $ B.pack "plants are institutions")}
 
 addToBlockchain :: Blockchain -> [Transaction] -> Blockchain
 addToBlockchain blockchain pendingTransactions = undefined
@@ -75,8 +75,27 @@ mineBlockAux block nonce
     Takes a block and a nonce and returns the hash of it.
 -}
 hashBlock :: Block -> Int -> String
-hashBlock block nonce = show $ hashWith SHA256 $ toByteString' $ (nonce + proof block)
+hashBlock block nonce = show $ hashWith SHA256 $ toByteString' $ (show nonce ++ transactionsToString block)
 
+
+-------------
+
+{-  transactionsToString block
+    Takes a block and returns concatenates the whole data structure into a string.
+    RETURNS: String of all transaction data in block.
+-}
+transactionsToString :: Block -> String
+transactionsToString block = transactionsToStringAux (transactions block)
+  where
+    transactionsToStringAux :: [Transaction] -> String
+    transactionsToStringAux []     = []
+    transactionsToStringAux (x:xs) = transactionToString x ++ transactionsToStringAux xs
+      where
+        transactionToString :: Transaction -> String
+        transactionToString (Transaction sender receiver amount) = userToString sender ++ userToString receiver ++ show amount 
+          where
+            userToString :: User -> String
+            userToString (User adress balance) = adress ++ show balance
 
 -- TODO
 {-
