@@ -43,12 +43,24 @@ benne = User "Benne" 100
 testTransaction = Transaction benne fabbe 100
 testBlock1 = Block {index = 1, transactions = [testTransaction], proof = 0, previousHash = (show $ hashWith SHA256 $ B.pack "test1")}
 testBlock2 = Block {index = 2, transactions = [testTransaction], proof = 1, previousHash = (show $ hashWith SHA256 $ B.pack "test2")}
-testBlockchain = Blockchain [testBlock1, testBlock2]
+testBlockchain = Blockchain [testBlock2, testBlock1, genesisBlock]
 
 genesisBlock = Block {index = 0, transactions = [], proof = 0, previousHash = (show $ hashWith SHA256 $ B.pack "plants are institutions")}
 
-addToBlockchain :: Blockchain -> [Transaction] -> Blockchain
-addToBlockchain blockchain pendingTransactions = undefined
+addToBlockchain :: Blockchain -> Block -> Blockchain
+addToBlockchain (Blockchain blocks) newBlock = Blockchain (newBlock:blocks)
+
+newBlock :: Blockchain -> Transaction -> Block
+newBlock blockchain newTransaction = Block newIndex newTransactions proof previousHash
+  where
+    newIndex = 1 + (index $ lastBlock blockchain)
+    newTransactions = newTransaction:(transactions $ lastBlock blockchain)
+    proof = snd $ mineBlock (lastBlock blockchain)
+    previousHash = fst $ mineBlock (lastBlock blockchain)
+
+addTransaction :: Block -> Transaction -> Block
+addTransaction (Block index transactions proof previousHash) newTransaction = Block index (newTransaction:transactions) proof previousHash
+
 
 ----------------------------
 -- Proof of Work / Mining --
@@ -75,13 +87,10 @@ mineBlockAux block nonce
     Takes a block and a nonce and returns the hash of it.
 -}
 hashBlock :: Block -> Int -> String
-hashBlock block nonce = show $ hashWith SHA256 $ toByteString' $ (show nonce ++ transactionsToString block)
-
-
--------------
+hashBlock block nonce = show $ hashWith SHA256 $ toByteString' $ (show nonce ++ previousHash block ++ transactionsToString block)
 
 {-  transactionsToString block
-    Takes a block and returns concatenates the whole data structure into a string.
+    Takes a block and returns a concatenation of the whole data structure into a string.
     RETURNS: String of all transaction data in block.
 -}
 transactionsToString :: Block -> String
@@ -96,12 +105,6 @@ transactionsToString block = transactionsToStringAux (transactions block)
           where
             userToString :: User -> String
             userToString (User adress balance) = adress ++ show balance
-
--- TODO
-{-
-newBlock ::
-newBlock = undefined
--}
 
 -- TODO
 {-
