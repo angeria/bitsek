@@ -74,6 +74,7 @@ validBlockchain :: Blockchain -> Bool
 validBlockchain (Blockchain blocks) = validBlockchainAux1 reversedBlockchain where
    reversedBlockchain = reverse blocks
 
+   --testcommit
 
 validBlockchainAux1 :: [Block] -> Bool
 validBlockchainAux1 [] = True
