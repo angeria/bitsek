@@ -44,6 +44,13 @@ testTransaction = Transaction benne fabbe 100
 testBlock1 = Block {index = 1, transactions = [testTransaction], proof = 0, previousHash = (show $ hashWith SHA256 $ B.pack "test1")}
 testBlock2 = Block {index = 2, transactions = [testTransaction], proof = 1, previousHash = (show $ hashWith SHA256 $ B.pack "test2")}
 testBlockchain = Blockchain [testBlock2, testBlock1, genesisBlock]
+genesisBlockchain = Blockchain [genesisBlock]
+
+hoggerBlock1 = Block {index = 1, transactions = [Transaction (User "Benne" 100) (User "Fabbe" 100) 100], proof = 911, previousHash = "000854f0985938bb5d557eadef1bbc8f1d0ab9bf46d58cecfdb774c87f2094c2"}
+hoggerBlock2 = Block {index = 2, transactions = [Transaction (User "Benne" 100) (User "Fabbe" 100) 100,Transaction (User "Benne" 100) (User "Fabbe" 100) 100], proof = 2719, previousHash = "00035fee66451dbc750d037bec5c5cb6e7f5e17c6a721e34db2de8be92d9dd1a"}
+hoggerBlock3 = Block {index = 3, transactions = [Transaction (User "Benne" 100) (User "Fabbe" 100) 100,Transaction (User "Benne" 100) (User "Fabbe" 100) 100,Transaction (User "Benne" 100) (User "Fabbe" 100) 100], proof = 1462, previousHash = "000970c8c3edafbf06fd059fd7bd30436eb8c6afd451004d8d5339f5bf0067da"}
+hoggerChain = Blockchain [hoggerBlock3, hoggerBlock2, hoggerBlock1, genesisBlock]
+
 
 genesisBlock = Block {index = 0, transactions = [], proof = 0, previousHash = (show $ hashWith SHA256 $ B.pack "plants are institutions")}
 
@@ -61,6 +68,19 @@ newBlock blockchain newTransaction = Block newIndex newTransactions proof previo
 addTransaction :: Block -> Transaction -> Block
 addTransaction (Block index transactions proof previousHash) newTransaction = Block index (newTransaction:transactions) proof previousHash
 
+validBlockchain :: Blockchain -> Bool
+{- Reversed blockchain is a list of blocks missing the genesis block
+-}
+validBlockchain (Blockchain blocks) = validBlockchainAux1 reversedBlockchain where
+   reversedBlockchain = reverse blocks
+
+
+validBlockchainAux1 :: [Block] -> Bool
+validBlockchainAux1 [] = True
+validBlockchainAux1 [x] = True
+validBlockchainAux1 (x:xs)
+   | hashBlock x (proof (head xs)) == (previousHash (head xs)) = validBlockchainAux1 xs
+   | otherwise = False
 
 ----------------------------
 -- Proof of Work / Mining --
