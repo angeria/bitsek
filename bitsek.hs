@@ -26,24 +26,19 @@ data Block = Block { index :: Int
                    } deriving (Show)
 
 -- Latest block should be head of list.
-data Blockchain = EmptyBlockchain | Blockchain [Block] deriving (Show)
+data Blockchain = Blockchain [Block] deriving (Show)
 
-----------------
--- BLOCKCHAIN --
-----------------
+-----------------------
+-- TESTING VARIABLES --
+-----------------------
 
--- Testing function for blockchain.
-exampleHashWith :: String -> String
-exampleHashWith msg = show $ hashWith SHA256 $ B.pack msg
-
-
--- Testing variables.
 fabbe = User "Fabbe" 100
 benne = User "Benne" 100
 testTransaction = Transaction benne fabbe 100
 testBlock1 = Block {index = 1, transactions = [testTransaction], proof = 0, previousHash = (show $ hashWith SHA256 $ B.pack "test1")}
 testBlock2 = Block {index = 2, transactions = [testTransaction], proof = 1, previousHash = (show $ hashWith SHA256 $ B.pack "test2")}
 testBlockchain = Blockchain [testBlock2, testBlock1, genesisBlock]
+genesisBlock = Block {index = 0, transactions = [], proof = 0, previousHash = (show $ hashWith SHA256 $ B.pack "plants are institutions")}
 genesisBlockchain = Blockchain [genesisBlock]
 
 hoggerBlock1 = Block {index = 1, transactions = [Transaction (User "Benne" 100) (User "Fabbe" 100) 100], proof = 911, previousHash = "000854f0985938bb5d557eadef1bbc8f1d0ab9bf46d58cecfdb774c87f2094c2"}
@@ -51,8 +46,9 @@ hoggerBlock2 = Block {index = 2, transactions = [Transaction (User "Benne" 100) 
 hoggerBlock3 = Block {index = 3, transactions = [Transaction (User "Benne" 100) (User "Fabbe" 100) 100,Transaction (User "Benne" 100) (User "Fabbe" 100) 100,Transaction (User "Benne" 100) (User "Fabbe" 100) 100], proof = 1462, previousHash = "000970c8c3edafbf06fd059fd7bd30436eb8c6afd451004d8d5339f5bf0067da"}
 hoggerChain = Blockchain [hoggerBlock3, hoggerBlock2, hoggerBlock1, genesisBlock]
 
-
-genesisBlock = Block {index = 0, transactions = [], proof = 0, previousHash = (show $ hashWith SHA256 $ B.pack "plants are institutions")}
+----------------
+-- BLOCKCHAIN --
+----------------
 
 addToBlockchain :: Blockchain -> Block -> Blockchain
 addToBlockchain (Blockchain blocks) newBlock = Blockchain (newBlock:blocks)
@@ -65,16 +61,16 @@ newBlock blockchain newTransaction = Block newIndex newTransactions proof previo
     proof = snd $ mineBlock (lastBlock blockchain)
     previousHash = fst $ mineBlock (lastBlock blockchain)
 
-addTransaction :: Block -> Transaction -> Block
-addTransaction (Block index transactions proof previousHash) newTransaction = Block index (newTransaction:transactions) proof previousHash
+{-  lastBlock blockchain 
+    Takes a blockchain and returns the last block in it.
+    PRE: blockchain must be non-empty.
+-}
+lastBlock :: Blockchain -> Block
+lastBlock blockchain = case blockchain of Blockchain (x:xs) -> x
 
 validBlockchain :: Blockchain -> Bool
-{- Reversed blockchain is a list of blocks missing the genesis block
--}
 validBlockchain (Blockchain blocks) = validBlockchainAux1 reversedBlockchain where
    reversedBlockchain = reverse blocks
-
-   --testcommit
 
 validBlockchainAux1 :: [Block] -> Bool
 validBlockchainAux1 [] = True
@@ -126,16 +122,3 @@ transactionsToString block = transactionsToStringAux (transactions block)
           where
             userToString :: User -> String
             userToString (User adress balance) = adress ++ show balance
-
--- TODO
-{-
-proofOfWork :: Blockchain -> Proof
-proofOfWork blockchain = lastblock blockchain
--}
-
-{-  lastBlock blockchain 
-    Takes a blockchain and returns the last block in it.
-    PRE: blockchain must be non-empty.
--}
-lastBlock :: Blockchain -> Block
-lastBlock blockchain = case blockchain of Blockchain (x:xs) -> x
