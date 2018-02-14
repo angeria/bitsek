@@ -114,6 +114,9 @@ aggUsersAux :: [User] -> [Transaction] -> [User]
 aggUsersAux [] _ = []
 aggUsersAux (u:us) ts = aggUser u ts : aggUsersAux us ts
 
+userBalance :: User -> Blockchain -> Int
+userBalance u b = balance (aggUser u (allTransactions b))
+
 aggUser :: User -> [Transaction] -> User
 aggUser u [] = u
 aggUser u (t:ts) = aggUser (updateUser u t) ts
