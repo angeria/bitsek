@@ -20,9 +20,8 @@ data User = User { adress :: String
                  } deriving (Show)
 
 -- Transaction Sender Receiver Amount
-data Transaction = Transaction Sender Password Receiver Amount deriving (Show)
+data Transaction = Transaction Sender Receiver Amount deriving (Show)
 type Sender = User
-type Password = String
 type Receiver = User
 type Amount = Int
 
@@ -42,6 +41,7 @@ data Blockchain = Blockchain [Block] deriving (Show)
 fabbe = User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100
 -- password: entropy
 benne = User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100
+people = [fabbe, benne]
 testTransaction = Transaction benne fabbe 100
 -- testBlockchain = Blockchain [testBlock2, testBlock1, genesisBlock]
 genesisBlock = Block {index = 0, transactions = [], proof = 0, previousHash = (show $ hashWith SHA256 $ B.pack "plants are institutions")}
@@ -52,14 +52,14 @@ testBlockchain2 = Blockchain [Block {index = 2, transactions = [Transaction (Use
                              ,Block {index = 1, transactions = [Transaction (User {adress = "Benne", privateKey = "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992", balance = 100}) (User {adress = "Fabbe", privateKey = "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da", balance = 100}) 100], proof = 911, previousHash = "000854f0985938bb5d557eadef1bbc8f1d0ab9bf46d58cecfdb774c87f2094c2"}
                              ,Block {index = 0, transactions = [], proof = 0, previousHash = "a2f2e5f03072b1b8d0b5ad55a1d3da642f1c327ce8e5de89385651176743fb39"}]
 
+hoggerBlock1 = Block {index = 1, transactions = [Transaction (User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100) (User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100) 52], proof = 911, previousHash = "000854f0985938bb5d557eadef1bbc8f1d0ab9bf46d58cecfdb774c87f2094c2"}
+hoggerBlock2 = Block {index = 2, transactions = [Transaction (User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100) (User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100) 22,Transaction (User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100) (User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100) 27], proof = 2719, previousHash = "00035fee66451dbc750d037bec5c5cb6e7f5e17c6a721e34db2de8be92d9dd1a"}
+hoggerBlock3 = Block {index = 3, transactions = [Transaction (User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100) (User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100) 31,Transaction (User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100) (User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100) 82,Transaction (User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100) (User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100) 12], proof = 1462, previousHash = "000970c8c3edafbf06fd059fd7bd30436eb8c6afd451004d8d5339f5bf0067da"}
+hoggerChain = Blockchain [hoggerBlock3, hoggerBlock2, hoggerBlock1, genesisBlock]
 
 ----------------
 -- BLOCKCHAIN --
 ----------------
-
--- Testing function for blockchain.
-exampleHashWith :: String -> String
-exampleHashWith msg = show $ hashWith SHA256 $ B.pack msg
 
 addToBlockchain :: Blockchain -> Block -> Blockchain
 addToBlockchain (Blockchain blocks) newBlock = Blockchain (newBlock:blocks)
@@ -103,16 +103,63 @@ validBlockchainAux (x:xs)
    | hashBlock x (proof (head xs)) == (previousHash (head xs)) = validBlockchainAux xs
    | otherwise = False
 
+----------------------------------
+-- BLOCKCHAIN UTILITY FUNCTIONS --
+----------------------------------
 
-{-  aggregateTransactions blockchain
-    Aggregates all the transactions in a blockchain into a list of transactions with latest txs first.
--}
-aggregateTransactions :: Blockchain -> [Transaction]
-aggregateTransactions (Blockchain blocks) = aggregateTransactionsAux blocks
+aggUsers :: Blockchain -> [User]
+aggUsers b = aggUsersAux (allUsers b) (allTransactions b)
 
-aggregateTransactionsAux :: [Block] -> [Transaction]
-aggregateTransactionsAux [] = []
-aggregateTransactionsAux (x:xs) = (transactions x) ++ (aggregateTransactionsAux xs)
+aggUsersAux :: [User] -> [Transaction] -> [User]
+aggUsersAux [] _ = []
+aggUsersAux (u:us) ts = aggUser u ts : aggUsersAux us ts
+
+aggUser :: User -> [Transaction] -> User
+aggUser u [] = u
+aggUser u (t:ts) = aggUser (updateUser u t) ts
+
+updateUser :: User -> Transaction -> User 
+updateUser (User ad pk balance) (Transaction sender receiver amount)
+    | ad == (adress sender) = (User ad pk (balance-amount))
+    | ad == (adress receiver) = (User ad pk (balance+amount))
+    | otherwise = (User ad pk balance)
+
+allTransactions :: Blockchain -> [Transaction]
+allTransactions (Blockchain blocks) = allTransactionsAux blocks
+
+allTransactionsAux :: [Block] -> [Transaction]
+allTransactionsAux [] = []
+allTransactionsAux (block:blocks) = transactions block ++ allTransactionsAux blocks
+
+allUsers :: Blockchain -> [User]
+allUsers b = uniqueUsers ((allSenders (allTransactions b)) ++ (allReceivers (allTransactions b))) []
+
+-- PRE: shall be invoked with ys == []
+uniqueUsers :: [User] -> [User] -> [User]
+uniqueUsers [] ys = ys
+uniqueUsers (x:xs) ys
+    | userExist x ys = uniqueUsers xs ys
+    | otherwise = uniqueUsers xs (x:ys)
+
+userExist :: User -> [User] -> Bool
+userExist u [] = False
+userExist u (x:xs)
+    | adress u == adress x = True
+    | otherwise = userExist u xs
+
+allSenders :: [Transaction] -> [User]
+allSenders [] = []
+allSenders (t:ts) = sender t : allSenders ts
+
+allReceivers :: [Transaction] -> [User]
+allReceivers [] = []
+allReceivers (t:ts) = receiver t : allReceivers ts
+
+sender :: Transaction -> User
+sender (Transaction s _ _) = s
+
+receiver :: Transaction -> Receiver
+receiver (Transaction _ r _) = r
 
 ----------------------------
 -- Proof of Work / Mining --
@@ -159,10 +206,10 @@ transactionsToString block = transactionsToStringAux (transactions block)
             userToString (User adress _ balance) = adress ++ show balance
 
 
-validTransaction :: Blockchain -> Transaction -> Bool
-validTransaction (Blockchain blocks) (Transaction sender password receiver amount) = 
+validTransaction :: Blockchain -> Transaction -> String -> Bool
+validTransaction blockchain (Transaction sender receiver amount) password= 
     if validPassword sender password
-        then if userBalance sender >= amount
+        then if (userBalance blockchain sender) >= amount
             then True
             else False
         else False
@@ -171,16 +218,17 @@ validTransaction (Blockchain blocks) (Transaction sender password receiver amoun
     
 
 
-userBalance :: Blockchain -> String -> Int
-userBalance (Blockchain blocks) adress = userBalanceAux1 (transactionList blocks) adress
+userBalance :: Blockchain -> User -> Int
+userBalance (Blockchain blocks) (User adress _ _) = userBalanceAux1 (transactionList blocks) adress
 
 
-transactionsList :: [Block] -> [Transaction]
-transactionsList (x:xs) = (transactions x) ++ transactionsList xs
+transactionList :: [Block] -> [Transaction]
+transactionList [x] = transactions x
+transactionList (x:xs) = (transactions x) ++ transactionList xs
     
 
 userBalanceAux1 :: [Transaction] -> String -> Int
-userBalanceAux1 ((Transaction sender password receiver amount):transactionList) adress
+userBalanceAux1 ((Transaction sender receiver amount):transactionList) adress
     |userBalanceAux2 sender adress == True = balance sender
     |userBalanceAux2 receiver adress == True = balance receiver
     |otherwise = userBalanceAux1 transactionList adress
