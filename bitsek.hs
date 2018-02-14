@@ -42,7 +42,7 @@ genesisBlock = Block {index = 0, transactions = [], proof = 0, previousHash = (s
 genesisBlockchain = Blockchain [genesisBlock]
 
 hoggerBlock1 = Block {index = 1, transactions = [Transaction (User "Benne" 100) (User "Fabbe" 100) 100], proof = 911, previousHash = "000854f0985938bb5d557eadef1bbc8f1d0ab9bf46d58cecfdb774c87f2094c2"}
-hoggerBlock2 = Block {index = 2, transactions = [Transaction (User "Benne" 100) (User "Fabbe" 100) 100,Transaction (User "Benne" 100) (User "Fabbe" 100) 100], proof = 2719, previousHash = "00035fee66451dbc750d037bec5c5cb6e7f5e17c6a721e34db2de8be92d9dd1a"}
+hoggerBlock2 = Block {index = 2, transactions = [Transaction (User "Benne" 101) (User "Fabbe" 100) 100,Transaction (User "Benne" 100) (User "Fabbe" 100) 100], proof = 2719, previousHash = "00035fee66451dbc750d037bec5c5cb6e7f5e17c6a721e34db2de8be92d9dd1a"}
 hoggerBlock3 = Block {index = 3, transactions = [Transaction (User "Benne" 100) (User "Fabbe" 100) 100,Transaction (User "Benne" 100) (User "Fabbe" 100) 100,Transaction (User "Benne" 100) (User "Fabbe" 100) 100], proof = 1462, previousHash = "000970c8c3edafbf06fd059fd7bd30436eb8c6afd451004d8d5339f5bf0067da"}
 hoggerChain = Blockchain [hoggerBlock3, hoggerBlock2, hoggerBlock1, genesisBlock]
 
@@ -54,10 +54,9 @@ addToBlockchain :: Blockchain -> Block -> Blockchain
 addToBlockchain (Blockchain blocks) newBlock = Blockchain (newBlock:blocks)
 
 newBlock :: Blockchain -> Transaction -> Block
-newBlock blockchain newTransaction = Block newIndex newTransactions proof previousHash
+newBlock blockchain newTransaction = Block newIndex [newTransaction] proof previousHash
   where
     newIndex = 1 + (index $ lastBlock blockchain)
-    newTransactions = newTransaction:(transactions $ lastBlock blockchain)
     proof = snd $ mineBlock (lastBlock blockchain)
     previousHash = fst $ mineBlock (lastBlock blockchain)
 
@@ -69,8 +68,9 @@ lastBlock :: Blockchain -> Block
 lastBlock blockchain = case blockchain of Blockchain (x:xs) -> x
 
 validBlockchain :: Blockchain -> Bool
-validBlockchain (Blockchain blocks) = validBlockchainAux1 reversedBlockchain where
-   reversedBlockchain = reverse blocks
+validBlockchain (Blockchain blocks) = validBlockchainAux1 reversedBlockchain 
+    where 
+        reversedBlockchain = reverse blocks
 
 validBlockchainAux1 :: [Block] -> Bool
 validBlockchainAux1 [] = True
