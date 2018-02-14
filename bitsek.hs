@@ -9,9 +9,15 @@ import qualified Data.ByteString.Char8 as B
 import Data.Binary
 import Data.ByteString.Conversion
 
-data User = User Adress Balance deriving (Show)
-type Adress = String
-type Balance = Int
+{-  User Adress PrivateKey Balance
+    - Adress: A public adress that money can be sent to.
+    - PrivateKey: A secret password needed to complete a transaction from the users wallet.
+    - Balance: The user's total funds.
+-}
+data User = User { adress :: String
+                 , privateKey :: String 
+                 , balance :: Int 
+                 } deriving (Show)
 
 -- Transaction Sender Receiver Amount
 data Transaction = Transaction Sender Receiver Amount deriving (Show)
@@ -31,20 +37,16 @@ data Blockchain = Blockchain [Block] deriving (Show)
 -----------------------
 -- TESTING VARIABLES --
 -----------------------
-
-fabbe = User "Fabbe" 100
-benne = User "Benne" 100
+-- password: singularity
+fabbe = User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100
+-- password: entropy
+benne = User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100
 testTransaction = Transaction benne fabbe 100
-testBlock1 = Block {index = 1, transactions = [testTransaction], proof = 0, previousHash = (show $ hashWith SHA256 $ B.pack "test1")}
-testBlock2 = Block {index = 2, transactions = [testTransaction], proof = 1, previousHash = (show $ hashWith SHA256 $ B.pack "test2")}
-testBlockchain = Blockchain [testBlock2, testBlock1, genesisBlock]
+-- testBlockchain = Blockchain [testBlock2, testBlock1, genesisBlock]
 genesisBlock = Block {index = 0, transactions = [], proof = 0, previousHash = (show $ hashWith SHA256 $ B.pack "plants are institutions")}
 genesisBlockchain = Blockchain [genesisBlock]
 
-hoggerBlock1 = Block {index = 1, transactions = [Transaction (User "Benne" 100) (User "Fabbe" 100) 100], proof = 911, previousHash = "000854f0985938bb5d557eadef1bbc8f1d0ab9bf46d58cecfdb774c87f2094c2"}
-hoggerBlock2 = Block {index = 2, transactions = [Transaction (User "Benne" 101) (User "Fabbe" 100) 100,Transaction (User "Benne" 100) (User "Fabbe" 100) 100], proof = 2719, previousHash = "00035fee66451dbc750d037bec5c5cb6e7f5e17c6a721e34db2de8be92d9dd1a"}
-hoggerBlock3 = Block {index = 3, transactions = [Transaction (User "Benne" 100) (User "Fabbe" 100) 100,Transaction (User "Benne" 100) (User "Fabbe" 100) 100,Transaction (User "Benne" 100) (User "Fabbe" 100) 100], proof = 1462, previousHash = "000970c8c3edafbf06fd059fd7bd30436eb8c6afd451004d8d5339f5bf0067da"}
-hoggerChain = Blockchain [hoggerBlock3, hoggerBlock2, hoggerBlock1, genesisBlock]
+
 
 ----------------
 -- BLOCKCHAIN --
@@ -60,6 +62,19 @@ newBlock blockchain newTransaction = Block newIndex [newTransaction] proof previ
     proof = snd $ mineBlock (lastBlock blockchain)
     previousHash = fst $ mineBlock (lastBlock blockchain)
 
+{-  encryptPassword password
+    Takes a password and encrypts it.
+    RETURNS: A hashed string of password.
+    EXAMPLE: encryptPassword "test" = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"
+-}
+encryptPassword :: String -> String
+encryptPassword password = show $ hashWith SHA256 $ toByteString' password
+
+validPassword :: User -> String -> Bool
+validPassword (User _ privateKey _) password
+    | (encryptPassword password) == privateKey = True
+    | otherwise = False 
+
 {-  lastBlock blockchain 
     Takes a blockchain and returns the last block in it.
     PRE: blockchain must be non-empty.
@@ -68,15 +83,15 @@ lastBlock :: Blockchain -> Block
 lastBlock blockchain = case blockchain of Blockchain (x:xs) -> x
 
 validBlockchain :: Blockchain -> Bool
-validBlockchain (Blockchain blocks) = validBlockchainAux1 reversedBlockchain 
+validBlockchain (Blockchain blocks) = validBlockchainAux reversedBlockchain 
     where 
         reversedBlockchain = reverse blocks
 
-validBlockchainAux1 :: [Block] -> Bool
-validBlockchainAux1 [] = True
-validBlockchainAux1 [x] = True
-validBlockchainAux1 (x:xs)
-   | hashBlock x (proof (head xs)) == (previousHash (head xs)) = validBlockchainAux1 xs
+validBlockchainAux :: [Block] -> Bool
+validBlockchainAux [] = True
+validBlockchainAux [x] = True
+validBlockchainAux (x:xs)
+   | hashBlock x (proof (head xs)) == (previousHash (head xs)) = validBlockchainAux xs
    | otherwise = False
 
 ----------------------------
@@ -121,4 +136,4 @@ transactionsToString block = transactionsToStringAux (transactions block)
         transactionToString (Transaction sender receiver amount) = userToString sender ++ userToString receiver ++ show amount 
           where
             userToString :: User -> String
-            userToString (User adress balance) = adress ++ show balance
+            userToString (User adress _ balance) = adress ++ show balance
