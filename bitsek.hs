@@ -41,9 +41,9 @@ testBlockchain = Blockchain [testBlock2, testBlock1, genesisBlock]
 genesisBlock = Block {index = 0, transactions = [], proof = 0, previousHash = (show $ hashWith SHA256 $ B.pack "plants are institutions")}
 genesisBlockchain = Blockchain [genesisBlock]
 
-hoggerBlock1 = Block {index = 1, transactions = [Transaction (User "Benne" 100) (User "Fabbe" 100) 100], proof = 911, previousHash = "000854f0985938bb5d557eadef1bbc8f1d0ab9bf46d58cecfdb774c87f2094c2"}
-hoggerBlock2 = Block {index = 2, transactions = [Transaction (User "Benne" 100) (User "Fabbe" 100) 100,Transaction (User "Benne" 100) (User "Fabbe" 100) 100], proof = 2719, previousHash = "00035fee66451dbc750d037bec5c5cb6e7f5e17c6a721e34db2de8be92d9dd1a"}
-hoggerBlock3 = Block {index = 3, transactions = [Transaction (User "Benne" 100) (User "Fabbe" 100) 100,Transaction (User "Benne" 100) (User "Fabbe" 100) 100,Transaction (User "Benne" 100) (User "Fabbe" 100) 100], proof = 1462, previousHash = "000970c8c3edafbf06fd059fd7bd30436eb8c6afd451004d8d5339f5bf0067da"}
+hoggerBlock1 = Block {index = 1, transactions = [Transaction (User "Benne" 100) (User "Fabbe" 100) 52], proof = 911, previousHash = "000854f0985938bb5d557eadef1bbc8f1d0ab9bf46d58cecfdb774c87f2094c2"}
+hoggerBlock2 = Block {index = 2, transactions = [Transaction (User "Benne" 100) (User "Fabbe" 100) 22,Transaction (User "Benne" 100) (User "Fabbe" 100) 27], proof = 2719, previousHash = "00035fee66451dbc750d037bec5c5cb6e7f5e17c6a721e34db2de8be92d9dd1a"}
+hoggerBlock3 = Block {index = 3, transactions = [Transaction (User "Benne" 100) (User "Fabbe" 100) 31,Transaction (User "Benne" 100) (User "Fabbe" 100) 82,Transaction (User "Benne" 100) (User "Fabbe" 100) 12], proof = 1462, previousHash = "000970c8c3edafbf06fd059fd7bd30436eb8c6afd451004d8d5339f5bf0067da"}
 hoggerChain = Blockchain [hoggerBlock3, hoggerBlock2, hoggerBlock1, genesisBlock]
 
 ----------------
@@ -94,12 +94,11 @@ aggUser :: User -> [Transaction] -> User
 aggUser u [] = u
 aggUser u (t:ts) = aggUser (updateUser u t) ts
 
--- not really working
 updateUser :: User -> Transaction -> User 
-updateUser (User ad b) (Transaction s r am)
-    | ad == userAdress s = (User ad (b-am))
-    | ad == userAdress r = (User ad (b+am))
-    | otherwise = (User ad b)
+updateUser (User adress balance) (Transaction sender receiver amount)
+    | adress == userAdress sender = (User adress (balance-amount))
+    | adress == userAdress receiver = (User adress (balance+amount))
+    | otherwise = (User adress balance)
 
 userAdress :: User -> Adress
 userAdress (User a _) = a
