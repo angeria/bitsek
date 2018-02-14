@@ -79,6 +79,17 @@ validBlockchainAux1 (x:xs)
    | hashBlock x (proof (head xs)) == (previousHash (head xs)) = validBlockchainAux1 xs
    | otherwise = False
 
+----------------------------------
+-- BLOCKCHAIN UTILITY FUNCTIONS --
+----------------------------------
+
+allTransactions :: Blockchain -> [Transaction]
+allTransactions (Blockchain blocks) = allTransactionsAux blocks
+
+allTransactionsAux :: [Block] -> [Transaction]
+allTransactionsAux [] = []
+allTransactionsAux (block:blocks) = transactions block ++ allTransactionsAux blocks
+
 ----------------------------
 -- Proof of Work / Mining --
 ----------------------------
