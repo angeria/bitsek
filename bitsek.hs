@@ -115,7 +115,7 @@ aggUsersAux [] _ = []
 aggUsersAux (u:us) ts = aggUser u ts : aggUsersAux us ts
 
 userBalance :: User -> Blockchain -> Int
-userBalance u b = balance (aggUser u (allTransactions b))
+userBalance user blockchain = balance (aggUser user (allTransactions blockchain))
 
 aggUser :: User -> [Transaction] -> User
 aggUser u [] = u
@@ -212,7 +212,7 @@ transactionsToString block = transactionsToStringAux (transactions block)
 validTransaction :: Blockchain -> Transaction -> String -> Bool
 validTransaction blockchain (Transaction sender receiver amount) password= 
     if validPassword sender password
-        then if (userBalance blockchain sender) >= amount
+        then if (userBalance sender blockchain) >= amount
             then True
             else False
         else False
