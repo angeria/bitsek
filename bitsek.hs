@@ -216,28 +216,3 @@ validTransaction blockchain (Transaction sender receiver amount) password=
             then True
             else False
         else False
-
-
-    
-
-
-userBalance :: Blockchain -> User -> Int
-userBalance (Blockchain blocks) (User adress _ _) = userBalanceAux1 (transactionList blocks) adress
-
-
-transactionList :: [Block] -> [Transaction]
-transactionList [x] = transactions x
-transactionList (x:xs) = (transactions x) ++ transactionList xs
-    
-
-userBalanceAux1 :: [Transaction] -> String -> Int
-userBalanceAux1 ((Transaction sender receiver amount):transactionList) adress
-    |userBalanceAux2 sender adress == True = balance sender
-    |userBalanceAux2 receiver adress == True = balance receiver
-    |otherwise = userBalanceAux1 transactionList adress
-
-userBalanceAux2 :: User -> String -> Bool
-userBalanceAux2 (User adress1 privateKey balance) adress2
-    |adress1 == adress2 = True
-    |otherwise = False
-    
