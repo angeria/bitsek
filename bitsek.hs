@@ -45,7 +45,11 @@ testTransaction = Transaction benne fabbe 100
 -- testBlockchain = Blockchain [testBlock2, testBlock1, genesisBlock]
 genesisBlock = Block {index = 0, transactions = [], proof = 0, previousHash = (show $ hashWith SHA256 $ B.pack "plants are institutions")}
 genesisBlockchain = Blockchain [genesisBlock]
-
+testBlockchain1 = Blockchain [Block {index = 1, transactions = [Transaction (User {adress = "Benne", privateKey = "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992", balance = 100}) (User {adress = "Fabbe", privateKey = "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da", balance = 100}) 100], proof = 911, previousHash = "000854f0985938bb5d557eadef1bbc8f1d0ab9bf46d58cecfdb774c87f2094c2"}
+                             ,Block {index = 0, transactions = [], proof = 0, previousHash = "a2f2e5f03072b1b8d0b5ad55a1d3da642f1c327ce8e5de89385651176743fb39"}]
+testBlockchain2 = Blockchain [Block {index = 2, transactions = [Transaction (User {adress = "Benne", privateKey = "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992", balance = 100}) (User {adress = "Fabbe", privateKey = "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da", balance = 100}) 100], proof = 2719, previousHash = "00035fee66451dbc750d037bec5c5cb6e7f5e17c6a721e34db2de8be92d9dd1a"}
+                             ,Block {index = 1, transactions = [Transaction (User {adress = "Benne", privateKey = "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992", balance = 100}) (User {adress = "Fabbe", privateKey = "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da", balance = 100}) 100], proof = 911, previousHash = "000854f0985938bb5d557eadef1bbc8f1d0ab9bf46d58cecfdb774c87f2094c2"}
+                             ,Block {index = 0, transactions = [], proof = 0, previousHash = "a2f2e5f03072b1b8d0b5ad55a1d3da642f1c327ce8e5de89385651176743fb39"}]
 
 
 ----------------
@@ -93,6 +97,17 @@ validBlockchainAux [x] = True
 validBlockchainAux (x:xs)
    | hashBlock x (proof (head xs)) == (previousHash (head xs)) = validBlockchainAux xs
    | otherwise = False
+
+
+{-  aggregateTransactions blockchain
+    Aggregates all the transactions in a blockchain into a list of transactions with latest txs first.
+-}
+aggregateTransactions :: Blockchain -> [Transaction]
+aggregateTransactions (Blockchain blocks) = aggregateTransactionsAux blocks
+
+aggregateTransactionsAux :: [Block] -> [Transaction]
+aggregateTransactionsAux [] = []
+aggregateTransactionsAux (x:xs) = (transactions x) ++ (aggregateTransactionsAux xs)
 
 ----------------------------
 -- Proof of Work / Mining --
