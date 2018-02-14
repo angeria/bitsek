@@ -90,6 +90,20 @@ allTransactionsAux :: [Block] -> [Transaction]
 allTransactionsAux [] = []
 allTransactionsAux (block:blocks) = transactions block ++ allTransactionsAux blocks
 
+aggUser :: User -> [Transaction] -> User
+aggUser u [] = u
+aggUser u (t:ts) = aggUser (updateUser u t) ts
+
+-- not really working
+updateUser :: User -> Transaction -> User 
+updateUser (User ad b) (Transaction s r am)
+    | ad == userAdress s = (User ad (b-am))
+    | ad == userAdress r = (User ad (b+am))
+    | otherwise = (User ad b)
+
+userAdress :: User -> Adress
+userAdress (User a _) = a
+
 ----------------------------
 -- Proof of Work / Mining --
 ----------------------------
