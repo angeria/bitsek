@@ -20,8 +20,9 @@ data User = User { adress :: String
                  } deriving (Show)
 
 -- Transaction Sender Receiver Amount
-data Transaction = Transaction Sender Receiver Amount deriving (Show)
+data Transaction = Transaction Sender Password Receiver Amount deriving (Show)
 type Sender = User
+type Password = String
 type Receiver = User
 type Amount = Int
 
@@ -59,24 +60,6 @@ testBlockchain2 = Blockchain [Block {index = 2, transactions = [Transaction (Use
 -- Testing function for blockchain.
 exampleHashWith :: String -> String
 exampleHashWith msg = show $ hashWith SHA256 $ B.pack msg
-
-
--- Testing variables.
-fabbe = User "Fabbe" 100
-benne = User "Benne" 100
-testTransaction = Transaction benne fabbe 100
-testBlock1 = Block {index = 1, transactions = [testTransaction], proof = 0, previousHash = (show $ hashWith SHA256 $ B.pack "test1")}
-testBlock2 = Block {index = 2, transactions = [testTransaction], proof = 1, previousHash = (show $ hashWith SHA256 $ B.pack "test2")}
-testBlockchain = Blockchain [testBlock2, testBlock1, genesisBlock]
-genesisBlockchain = Blockchain [genesisBlock]
-
-hoggerBlock1 = Block {index = 1, transactions = [Transaction (User "Benne" 100) (User "Fabbe" 100) 100], proof = 911, previousHash = "000854f0985938bb5d557eadef1bbc8f1d0ab9bf46d58cecfdb774c87f2094c2"}
-hoggerBlock2 = Block {index = 2, transactions = [Transaction (User "Benne" 100) (User "Fabbe" 100) 100,Transaction (User "Benne" 100) (User "Fabbe" 100) 100], proof = 2719, previousHash = "00035fee66451dbc750d037bec5c5cb6e7f5e17c6a721e34db2de8be92d9dd1a"}
-hoggerBlock3 = Block {index = 3, transactions = [Transaction (User "Benne" 100) (User "Fabbe" 100) 100,Transaction (User "Benne" 100) (User "Fabbe" 100) 100,Transaction (User "Benne" 100) (User "Fabbe" 100) 100], proof = 1462, previousHash = "000970c8c3edafbf06fd059fd7bd30436eb8c6afd451004d8d5339f5bf0067da"}
-hoggerChain = Blockchain [hoggerBlock3, hoggerBlock2, hoggerBlock1, genesisBlock]
-
-
-genesisBlock = Block {index = 0, transactions = [], proof = 0, previousHash = (show $ hashWith SHA256 $ B.pack "plants are institutions")}
 
 addToBlockchain :: Blockchain -> Block -> Blockchain
 addToBlockchain (Blockchain blocks) newBlock = Blockchain (newBlock:blocks)
@@ -177,74 +160,33 @@ transactionsToString block = transactionsToStringAux (transactions block)
 
 
 validTransaction :: Blockchain -> Transaction -> Bool
-validTransaction (Blockchain blocks) (Transaction Sender Receiver Amount) = userBalance sender
+validTransaction (Blockchain blocks) (Transaction sender password receiver amount) = 
+    if validPassword sender password
+        then if userBalance sender >= amount
+            then True
+            else False
+        else False
 
-validTransactionAux1 :: [Block] -> Transaction
-validTransactionAux1 (x:xs) = validTransactionAux2 x
+
     
-validTransactionAux2 :: Block -> Transaction
-validTransactionAux2 block = transaction block
-
-userBalance :: Blockchain -> String
-userBalance (Blockchain blocks) adress = 
 
 
-userBalanceAux4 :: [Block] -> String -> Balance
-userBalanceAux4 (x:xs) = userBalanceAux5 x
+userBalance :: Blockchain -> String -> Int
+userBalance (Blockchain blocks) adress = userBalanceAux1 (transactionList blocks) adress
+
+
+transactionsList :: [Block] -> [Transaction]
+transactionsList (x:xs) = (transactions x) ++ transactionsList xs
     
-userBalanceAux5 :: Block -> String -> Balance
-userBalanceAux5 block = userBalanceAux1 (transactions block)
 
-
-
-userBalanceAux1 :: Transaction -> String -> Balance
-userBalanceAux1 (Transaction sender receiver amount) adress
-    |userBalanceAux2 sender adress == True = userBalanceAux3 sender
-    |userBalanceAux2 receiver adress == True = userBalanceAux3 receiver
+userBalanceAux1 :: [Transaction] -> String -> Int
+userBalanceAux1 ((Transaction sender password receiver amount):transactionList) adress
+    |userBalanceAux2 sender adress == True = balance sender
+    |userBalanceAux2 receiver adress == True = balance receiver
+    |otherwise = userBalanceAux1 transactionList adress
 
 userBalanceAux2 :: User -> String -> Bool
 userBalanceAux2 (User adress1 privateKey balance) adress2
     |adress1 == adress2 = True
     |otherwise = False
     
-userBalanceAux3 :: User -> Balance
-userBalanceAux3 (User adress privateKeybalance) = balance
-
-
-
-validTransaction :: Blockchain -> Transaction -> Bool
-validTransaction (Blockchain blocks) (Transaction Sender Receiver Amount) = userBalance sender
-
-validTransactionAux1 :: [Block] -> Transaction
-validTransactionAux1 (x:xs) = validTransactionAux2 x
-    
-validTransactionAux2 :: Block -> Transaction
-validTransactionAux2 block = transaction block
-
-userBalance :: Blockchain -> String
-userBalance (Blockchain blocks) adress = 
-
-
-userBalanceAux4 :: [Block] -> String -> Balance
-userBalanceAux4 (x:xs) = userBalanceAux5 x
-    
-userBalanceAux5 :: Block -> String -> Balance
-userBalanceAux5 block = userBalanceAux1 (transactions block)
-
-
-
-userBalanceAux1 :: Transaction -> String -> Balance
-userBalanceAux1 (Transaction sender receiver amount) adress
-    |userBalanceAux2 sender adress == True = userBalanceAux3 sender
-    |userBalanceAux2 receiver adress == True = userBalanceAux3 receiver
-
-userBalanceAux2 :: User -> String -> Bool
-userBalanceAux2 (User adress1 privateKey balance) adress2
-    |adress1 == adress2 = True
-    |otherwise = False
-    
-userBalanceAux3 :: User -> Balance
-userBalanceAux3 (User adress privateKeybalance) = balance
-
-
-
