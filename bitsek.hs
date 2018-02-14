@@ -41,6 +41,7 @@ data Blockchain = Blockchain [Block] deriving (Show)
 fabbe = User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100
 -- password: entropy
 benne = User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100
+people = [fabbe, benne]
 testTransaction = Transaction benne fabbe 100
 -- testBlockchain = Blockchain [testBlock2, testBlock1, genesisBlock]
 genesisBlock = Block {index = 0, transactions = [], proof = 0, previousHash = (show $ hashWith SHA256 $ B.pack "plants are institutions")}
@@ -106,12 +107,12 @@ validBlockchainAux (x:xs)
 -- BLOCKCHAIN UTILITY FUNCTIONS --
 ----------------------------------
 
-allTransactions :: Blockchain -> [Transaction]
-allTransactions (Blockchain blocks) = allTransactionsAux blocks
+aggUsers :: Blockchain -> [User]
+aggUsers b = aggUsersAux (allUsers b) (allTransactions b)
 
-allTransactionsAux :: [Block] -> [Transaction]
-allTransactionsAux [] = []
-allTransactionsAux (block:blocks) = transactions block ++ allTransactionsAux blocks
+aggUsersAux :: [User] -> [Transaction] -> [User]
+aggUsersAux [] _ = []
+aggUsersAux (u:us) ts = aggUser u ts : aggUsersAux us ts
 
 aggUser :: User -> [Transaction] -> User
 aggUser u [] = u
@@ -123,6 +124,42 @@ updateUser (User ad pk balance) (Transaction sender receiver amount)
     | ad == (adress receiver) = (User ad pk (balance+amount))
     | otherwise = (User ad pk balance)
 
+allTransactions :: Blockchain -> [Transaction]
+allTransactions (Blockchain blocks) = allTransactionsAux blocks
+
+allTransactionsAux :: [Block] -> [Transaction]
+allTransactionsAux [] = []
+allTransactionsAux (block:blocks) = transactions block ++ allTransactionsAux blocks
+
+allUsers :: Blockchain -> [User]
+allUsers b = uniqueUsers ((allSenders (allTransactions b)) ++ (allReceivers (allTransactions b))) []
+
+-- PRE: shall be invoked with ys == []
+uniqueUsers :: [User] -> [User] -> [User]
+uniqueUsers [] ys = ys
+uniqueUsers (x:xs) ys
+    | userExist x ys = uniqueUsers xs ys
+    | otherwise = uniqueUsers xs (x:ys)
+
+userExist :: User -> [User] -> Bool
+userExist u [] = False
+userExist u (x:xs)
+    | adress u == adress x = True
+    | otherwise = userExist u xs
+
+allSenders :: [Transaction] -> [User]
+allSenders [] = []
+allSenders (t:ts) = sender t : allSenders ts
+
+allReceivers :: [Transaction] -> [User]
+allReceivers [] = []
+allReceivers (t:ts) = receiver t : allReceivers ts
+
+sender :: Transaction -> User
+sender (Transaction s _ _) = s
+
+receiver :: Transaction -> Receiver
+receiver (Transaction _ r _) = r
 
 ----------------------------
 -- Proof of Work / Mining --
