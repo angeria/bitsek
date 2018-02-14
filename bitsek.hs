@@ -51,6 +51,10 @@ testBlockchain2 = Blockchain [Block {index = 2, transactions = [Transaction (Use
                              ,Block {index = 1, transactions = [Transaction (User {adress = "Benne", privateKey = "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992", balance = 100}) (User {adress = "Fabbe", privateKey = "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da", balance = 100}) 100], proof = 911, previousHash = "000854f0985938bb5d557eadef1bbc8f1d0ab9bf46d58cecfdb774c87f2094c2"}
                              ,Block {index = 0, transactions = [], proof = 0, previousHash = "a2f2e5f03072b1b8d0b5ad55a1d3da642f1c327ce8e5de89385651176743fb39"}]
 
+hoggerBlock1 = Block {index = 1, transactions = [Transaction (User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100) (User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100) 52], proof = 911, previousHash = "000854f0985938bb5d557eadef1bbc8f1d0ab9bf46d58cecfdb774c87f2094c2"}
+hoggerBlock2 = Block {index = 2, transactions = [Transaction (User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100) (User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100) 22,Transaction (User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100) (User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100) 27], proof = 2719, previousHash = "00035fee66451dbc750d037bec5c5cb6e7f5e17c6a721e34db2de8be92d9dd1a"}
+hoggerBlock3 = Block {index = 3, transactions = [Transaction (User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100) (User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100) 31,Transaction (User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100) (User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100) 82,Transaction (User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100) (User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100) 12], proof = 1462, previousHash = "000970c8c3edafbf06fd059fd7bd30436eb8c6afd451004d8d5339f5bf0067da"}
+hoggerChain = Blockchain [hoggerBlock3, hoggerBlock2, hoggerBlock1, genesisBlock]
 
 ----------------
 -- BLOCKCHAIN --
@@ -98,16 +102,27 @@ validBlockchainAux (x:xs)
    | hashBlock x (proof (head xs)) == (previousHash (head xs)) = validBlockchainAux xs
    | otherwise = False
 
+----------------------------------
+-- BLOCKCHAIN UTILITY FUNCTIONS --
+----------------------------------
 
-{-  aggregateTransactions blockchain
-    Aggregates all the transactions in a blockchain into a list of transactions with latest txs first.
--}
-aggregateTransactions :: Blockchain -> [Transaction]
-aggregateTransactions (Blockchain blocks) = aggregateTransactionsAux blocks
+allTransactions :: Blockchain -> [Transaction]
+allTransactions (Blockchain blocks) = allTransactionsAux blocks
 
-aggregateTransactionsAux :: [Block] -> [Transaction]
-aggregateTransactionsAux [] = []
-aggregateTransactionsAux (x:xs) = (transactions x) ++ (aggregateTransactionsAux xs)
+allTransactionsAux :: [Block] -> [Transaction]
+allTransactionsAux [] = []
+allTransactionsAux (block:blocks) = transactions block ++ allTransactionsAux blocks
+
+aggUser :: User -> [Transaction] -> User
+aggUser u [] = u
+aggUser u (t:ts) = aggUser (updateUser u t) ts
+
+updateUser :: User -> Transaction -> User 
+updateUser (User ad pk balance) (Transaction sender receiver amount)
+    | ad == (adress sender) = (User ad pk (balance-amount))
+    | ad == (adress receiver) = (User ad pk (balance+amount))
+    | otherwise = (User ad pk balance)
+
 
 ----------------------------
 -- Proof of Work / Mining --
