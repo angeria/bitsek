@@ -122,10 +122,10 @@ aggUser u [] = u
 aggUser u (t:ts) = aggUser (updateUser u t) ts
 
 updateUser :: User -> Transaction -> User 
-updateUser (User ad pk balance) (Transaction sender receiver amount)
-    | ad == (adress sender) = (User ad pk (balance-amount))
-    | ad == (adress receiver) = (User ad pk (balance+amount))
-    | otherwise = (User ad pk balance)
+updateUser (User ad pkey balance) (Transaction sender receiver amount)
+    | ad == (adress sender) = (User ad pkey (balance-amount))
+    | ad == (adress receiver) = (User ad pkey (balance+amount))
+    | otherwise = (User ad pkey balance)
 
 allTransactions :: Blockchain -> [Transaction]
 allTransactions (Blockchain blocks) = allTransactionsAux blocks
