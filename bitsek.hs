@@ -19,11 +19,10 @@ data User = User { adress :: String
                  , balance :: Int 
                  } deriving (Show)
 
--- Transaction Sender Receiver Amount
-data Transaction = Transaction Sender Receiver Amount deriving (Show)
-type Sender = User
-type Receiver = User
-type Amount = Int
+data Transaction = Transaction { sender :: User
+                               , receiver :: User
+                               , amount :: Int
+                               } deriving (Show)
 
 data Block = Block { index :: Int 
                    , transactions :: [Transaction]
@@ -157,12 +156,6 @@ allSenders (t:ts) = sender t : allSenders ts
 allReceivers :: [Transaction] -> [User]
 allReceivers [] = []
 allReceivers (t:ts) = receiver t : allReceivers ts
-
-sender :: Transaction -> User
-sender (Transaction s _ _) = s
-
-receiver :: Transaction -> Receiver
-receiver (Transaction _ r _) = r
 
 ----------------------------
 -- Proof of Work / Mining --
