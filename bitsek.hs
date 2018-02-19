@@ -218,3 +218,51 @@ validTransaction blockchain (Transaction sender receiver amount) password=
             then True
             else False
         else False
+
+
+--------------
+---- APP -----
+--------------
+main (pb, bc) = do 
+    putStrLn "welcome, what do you want to do?"
+    action <- getLine
+    if action == "sendBitsek"
+        then putStrLn "hello"
+    else 
+        putStrLn "bye"
+{-
+menu = do 
+    putStrLn "Menu"
+    putStrLn "---------------------"
+    putStrLn "Send bitsek, enter: sendBitsek" 
+    putStrLn "Show balance, enter: showBalance"
+    putStrLn "Mine pending block, enter: mine"
+    putStrLn "---------------------"    
+    putStrLn "What do you want to do?"
+-}
+sendBitsek (pb, bc) = do 
+    putStrLn "To who from who and how much"
+    
+    putStrLn "Enter sender adress" 
+    s <- getLine
+    let sender = (getUser s bc)
+
+    putStrLn "Enter sender password" 
+    password <- getLine
+
+    putStrLn "Enter receiver adress" 
+    r <- getLine 
+    let receiver = (getUser r newBlock)
+
+    putStrLn "Enter amount"
+    am <- getLine
+    let amount = (read am :: Int)
+
+    if (validTransaction bc (Transaction sender receiver amount) password)
+        then do
+            let pb' = (newBlock bc (Transaction sender receiver amount))
+            putStrLn "Hooray! Your transactions was cleared."
+            return (main (pb', bc))
+        else do
+            putStrLn "Bam, worng password bro."
+            return (main (pb, bc))
