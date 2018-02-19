@@ -157,6 +157,15 @@ allReceivers :: [Transaction] -> [User]
 allReceivers [] = []
 allReceivers (t:ts) = receiver t : allReceivers ts
 
+getUser :: String -> Blockchain -> User 
+getUser ad b = getUserAux ad (aggUsers b)
+
+getUserAux :: String -> [User] -> User
+getUserAux ad [] = (User "User" "Not Found" 0)
+getUserAux ad (u:us) 
+    | ad == adress u = u
+    | otherwise = getUserAux ad us
+
 ----------------------------
 -- Proof of Work / Mining --
 ----------------------------
