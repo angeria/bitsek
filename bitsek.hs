@@ -116,6 +116,9 @@ aggUsersAux (u:us) ts = aggUser u ts : aggUsersAux us ts
 userBalance :: User -> Blockchain -> Int
 userBalance user blockchain = balance (aggUser user (allTransactions blockchain))
 
+checkBalance :: String -> Blockchain -> Int
+checkBalance adress bc = userBalance (getUser adress bc) bc
+
 aggUser :: User -> [Transaction] -> User
 aggUser u [] = u
 aggUser u (t:ts) = aggUser (updateUser u t) ts
@@ -156,6 +159,15 @@ allSenders (t:ts) = sender t : allSenders ts
 allReceivers :: [Transaction] -> [User]
 allReceivers [] = []
 allReceivers (t:ts) = receiver t : allReceivers ts
+
+getUser :: String -> Blockchain -> User 
+getUser ad b = getUserAux ad (aggUsers b)
+
+getUserAux :: String -> [User] -> User
+getUserAux ad [] = (User "User" "Not Found" 0)
+getUserAux ad (u:us) 
+    | ad == adress u = u
+    | otherwise = getUserAux ad us
 
 ----------------------------
 -- Proof of Work / Mining --
