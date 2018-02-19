@@ -24,13 +24,23 @@ data Transaction = Transaction { sender :: User
                                , amount :: Int
                                } deriving (Show)
 
+{-  Block
+    A block with some information.
+        Index: The index of the block, where the first block in the blockchain has index 0.
+        Transactions: A list of all the transactions in that block.
+        Proof: The nonce (an arbitary Int) that when hashed with the previous block gives a hash that matches a predefined condition.
+        previousHash: The hash of the block before the current block in the blockchain.
+-}
 data Block = Block { index :: Int 
                    , transactions :: [Transaction]
                    , proof :: Int
                    , previousHash :: String
                    } deriving (Show)
 
--- Latest block should be head of list.
+{-  Blockchain
+    Represents a list of blocks.
+    INVARIANT: The latest block has to be the head of the list of blocks.
+-}
 data Blockchain = Blockchain [Block] deriving (Show)
 
 -----------------------
