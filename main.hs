@@ -10,6 +10,13 @@ menu = do
     putStrLn "Show balance, enter: showBalance"
     putStrLn "What do you want to do?"
 
+balance (pb, bc) = do
+    putStrLn "What user balance do you want to snoop?"
+    adress <- getLine
+
+checkBalance :: Blockchain -> String -> Int
+checkBalance bc adress
+    |adress (head (aggUsers bc)) = adress
 
 sendBitsek (pb, bc) = do 
     putStrLn "To who from who and how much"
