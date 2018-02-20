@@ -268,15 +268,16 @@ menu = do
     putStrLn "Menu"
     putStrLn "--------------------------------"
     putStrLn "1. sendBitsek" 
-    putStrLn "2. showBalance"
-    putStrLn "3. mineBlock"
+    -- putStrLn "2. showBalance"
+    -- putStrLn "3. mineBlock"
     putStrLn "--------------------------------"    
     putStrLn "What do you want to do?"
     putStrLn "--------------------------------" 
 
 blockMiner (pb, bc) = do
     let bc' = (mineBlock pb):bc
-    program (initBlock, bc')
+    let pb' = (Block ((index pb)+1) [] 0 "") 
+    program (pb', bc')
 
 showBalance (pb, bc) = do
     putStrLn "What adress you wanna snoop?"
