@@ -6,15 +6,23 @@ This is a Haskell project in the course "Program Design and Data Structures" dur
 # Authors 
 Benjamin Angeria, Holger Swartling and Fabian Haglund.
 
-# Required packages
+# Setup
+Clone this repo to your desktop.
 
 Run cabal install "package name":
 
 - bytestring-conversion
 - cryptonite
 
+Run main.hs
+
+# Table of Contents
+
+# Introduction
+
+# Inner workings
+The program runs client-side commands in main.hs but uses the computationally pure Bitsek.hs for more demanding calculations.
 # This document should include:
-- The project title, the names of all group members, and a statement of the fact that this is the project for this course this year.
 - A table of contents, an introduction, and summary of what the program does.
 - Use cases: a guide for how to actually use your program, including key examples.
 - Program documentation: a description of how your program really works, including at least:
