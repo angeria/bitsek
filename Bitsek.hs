@@ -2,18 +2,24 @@
 --                 Haskell Project: Bitsek                         --
 -- Authors: Benjamin Angeria, Fabian Haglund and Holger Swartling. --
 ---------------------------------------------------------------------
+
+-------------
+-- IMPORTS --
+-------------
+
+-- Cryptographic hash functions.
 import Crypto.Hash
-import Data.ByteString (ByteString)
-import qualified Data.ByteString.Char8 as B
-import Data.Binary
+
+-- Functions to convert to and from bytestrings which can be hashed.
 import Data.ByteString.Conversion
 
-module Bitsek
-where
+----------------
+-- DATA TYPES --
+----------------
 
 {-  User Adress PrivateKey Balance
     - Adress: A public adress that money can be sent to.
-    - PrivateKey: A secret password needed to complete a transaction from the users wallet.
+    - PrivateKey: The hash of a secret password needed to send a transaction from the users wallet.
     - Balance: The user's total funds.
 -}
 data User = User { adress :: String
@@ -26,37 +32,46 @@ data Transaction = Transaction { sender :: User
                                , amount :: Int
                                } deriving (Show)
 
+{-  Block
+    A block with the following information:
+        Index: The index of the block, where the first block in the blockchain (the "genesis block") has index 0.
+        Transactions: A list of all the transactions in that block.
+        Proof: The nonce (an arbitrary Int), that when hashed with the previous block gives a string that matches a predefined condition.
+        PreviousHash: The hash of the block before the current block in the blockchain.
+-}
 data Block = Block { index :: Int 
                    , transactions :: [Transaction]
                    , proof :: Int
                    , previousHash :: String
                    } deriving (Show)
 
--- Latest block should be head of list.
+{-  Blockchain
+    Represents a list of blocks.
+    INVARIANT: The latest block has to be the head of the list of blocks.
+
+-}
 data Blockchain = Blockchain [Block] deriving (Show)
 
 -----------------------
 -- TESTING VARIABLES --
 -----------------------
--- password: singularity
-fabbe = User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100
--- password: entropy    
-benne = User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100
-people = [fabbe, benne]
-testTransaction = Transaction benne fabbe 100
--- testBlockchain = Blockchain [testBlock2, testBlock1, genesisBlock]
-genesisBlock = Block {index = 0, transactions = [], proof = 0, previousHash = (show $ hashWith SHA256 $ B.pack "plants are institutions")}
-genesisBlockchain = Blockchain [genesisBlock]
-testBlockchain1 = Blockchain [Block {index = 1, transactions = [Transaction (User {adress = "Benne", privateKey = "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992", balance = 100}) (User {adress = "Fabbe", privateKey = "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da", balance = 100}) 100], proof = 911, previousHash = "000854f0985938bb5d557eadef1bbc8f1d0ab9bf46d58cecfdb774c87f2094c2"}
-                             ,Block {index = 0, transactions = [], proof = 0, previousHash = "a2f2e5f03072b1b8d0b5ad55a1d3da642f1c327ce8e5de89385651176743fb39"}]
-testBlockchain2 = Blockchain [Block {index = 2, transactions = [Transaction (User {adress = "Benne", privateKey = "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992", balance = 100}) (User {adress = "Fabbe", privateKey = "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da", balance = 100}) 100], proof = 2719, previousHash = "00035fee66451dbc750d037bec5c5cb6e7f5e17c6a721e34db2de8be92d9dd1a"}
-                             ,Block {index = 1, transactions = [Transaction (User {adress = "Benne", privateKey = "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992", balance = 100}) (User {adress = "Fabbe", privateKey = "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da", balance = 100}) 100], proof = 911, previousHash = "000854f0985938bb5d557eadef1bbc8f1d0ab9bf46d58cecfdb774c87f2094c2"}
-                             ,Block {index = 0, transactions = [], proof = 0, previousHash = "a2f2e5f03072b1b8d0b5ad55a1d3da642f1c327ce8e5de89385651176743fb39"}]
 
-hoggerBlock1 = Block {index = 1, transactions = [Transaction (User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100) (User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100) 52], proof = 911, previousHash = "000854f0985938bb5d557eadef1bbc8f1d0ab9bf46d58cecfdb774c87f2094c2"}
-hoggerBlock2 = Block {index = 2, transactions = [Transaction (User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100) (User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100) 22,Transaction (User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100) (User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100) 27], proof = 2719, previousHash = "00035fee66451dbc750d037bec5c5cb6e7f5e17c6a721e34db2de8be92d9dd1a"}
-hoggerBlock3 = Block {index = 3, transactions = [Transaction (User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100) (User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100) 31,Transaction (User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100) (User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100) 82,Transaction (User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100) (User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100) 12], proof = 1462, previousHash = "000970c8c3edafbf06fd059fd7bd30436eb8c6afd451004d8d5339f5bf0067da"}
-hoggerChain = Blockchain [hoggerBlock3, hoggerBlock2, hoggerBlock1, genesisBlock]
+-- password: singularity
+fabbe = User "fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 1000
+-- password: entropy
+benne = User "benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 1000
+-- password: anka 
+hogge = User "hogge" "01d9db6e08b2426c3c56122aca300c143a60157de6899d6bc84614c40d86bb66" 1000
+-- password: monadsforbreakfast
+dave = User "dave" "4c7be2f6d37d20fe95050f329b58bcb3b552c3544260b14319964314b38ad416" 1000
+
+initialTransaction1 = Transaction fabbe benne 0
+initialTransaction2 = Transaction hogge dave 0
+
+initialTransactions = [initialTransaction1, initialTransaction2]
+
+genesisBlock = Block {index = 0, transactions = initialTransactions, proof = 0, previousHash = (show $ hashWith SHA256 $ toByteString' "plants are institutions")}
+genesisBlockchain = Blockchain [genesisBlock]
 
 ----------------
 -- BLOCKCHAIN --
@@ -154,6 +169,12 @@ userExist u (x:xs)
     | adress u == adress x = True
     | otherwise = userExist u xs
 
+adressExist :: String -> [User] -> Bool
+adressExist a [] = False
+adressExist a (x:xs)
+        | a == adress x = True
+        | otherwise = adressExist a xs
+
 allSenders :: [Transaction] -> [User]
 allSenders [] = []
 allSenders (t:ts) = sender t : allSenders ts
@@ -228,19 +249,19 @@ validTransaction blockchain (Transaction sender receiver amount) password=
 --------------
 ---- APP -----
 --------------
+
 main = do 
-    let initPendingBlock = "block"
-    let initBlockchain = "blockchain"
-    program(initPendingBlock, initBlockchain)
+    let initPendingBlock = (Block 0 [] 0 "")
+    let initBlockchain = (Blockchain [genesisBlock])
+    program (initPendingBlock, initBlockchain)
 
 program (pb, bc) = do 
     menu
     action <- getLine
     case action of 
         "sendBitsek" -> sendBitsek (pb, bc)
-        "showBalance" -> putStrLn ("showing balance from" ++ bc)
-        "mine" -> putStrLn ("mining " ++ pb ++ "and adding to " ++ bc)
-
+        "showBalance" -> showBalance (pb, bc)
+        "mineBlock" -> blockMiner (pb, bc)
 
 menu = do 
     putStrLn "--------------------------------" 
@@ -253,27 +274,43 @@ menu = do
     putStrLn "What do you want to do?"
     putStrLn "--------------------------------" 
 
+blockMiner (pb, bc) = do
+    let bc' = (mineBlock pb):bc
+    program (initBlock, bc')
+
+showBalance (pb, bc) = do
+    putStrLn "What adress you wanna snoop?"
+    adress <- getLine
+    let bal = show $ checkBalance adress bc
+    putStrLn ("Your balance is "++bal)
+    program (pb, bc)
+
 sendBitsek (pb, bc) = do 
+    let pbIx = index pb
+    let pbTs = transactions pb
+    let pbPf = proof pb
+    let pbPh = previousHash pb
+
     putStrLn "Type in sender adress: "
     s <- getLine
-    --let sender = (getUser s bc)
+    let sender = (getUser s bc)
 
-    putStrLn "Type in sender private key"
-    pk <- getLine
+    putStrLn "Type in sender password: "
+    pw <- getLine
 
     putStrLn "Type in receiver adress"
     r <- getLine
-    --let receiver = (getUser r bc)
+    let receiver = (getUser r bc)
 
     putStrLn "Type in amount to send"
     a <- getLine
-    --let amount = (read a :: Int)
+    let amount = (read a :: Int)
     -- TO DO: implement try & catch exception handler with Either monad
 
-    -- TO DO: implement validTransaction with pk
-    putStrLn s
-    putStrLn pk
-    putStrLn r
-    putStrLn a
+    let t = (Transaction sender receiver amount)
 
-    program (pb, (bc ++ s))
+    -- TO DO: implement validTransaction with pk
+    --program ((Block pbIx, (pbTs ++ t), pbPf, pbPh), bc)
+    let pb' = Block pbIx (pbTs ++ [t]) pbPf pbPh
+
+    program (pb', bc)
