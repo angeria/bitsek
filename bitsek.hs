@@ -223,3 +223,57 @@ validTransaction blockchain (Transaction sender receiver amount) password=
             then True
             else False
         else False
+
+
+--------------
+---- APP -----
+--------------
+main = do 
+    let initPendingBlock = "block"
+    let initBlockchain = "blockchain"
+    program(initPendingBlock, initBlockchain)
+
+program (pb, bc) = do 
+    menu
+    action <- getLine
+    case action of 
+        "sendBitsek" -> sendBitsek (pb, bc)
+        "showBalance" -> putStrLn ("showing balance from" ++ bc)
+        "mine" -> putStrLn ("mining " ++ pb ++ "and adding to " ++ bc)
+
+
+menu = do 
+    putStrLn "--------------------------------" 
+    putStrLn "Menu"
+    putStrLn "--------------------------------"
+    putStrLn "1. sendBitsek" 
+    putStrLn "2. showBalance"
+    putStrLn "3. mineBlock"
+    putStrLn "--------------------------------"    
+    putStrLn "What do you want to do?"
+    putStrLn "--------------------------------" 
+
+sendBitsek (pb, bc) = do 
+    putStrLn "Type in sender adress: "
+    s <- getLine
+    --let sender = (getUser s bc)
+
+    putStrLn "Type in sender private key"
+    pk <- getLine
+
+    putStrLn "Type in receiver adress"
+    r <- getLine
+    --let receiver = (getUser r bc)
+
+    putStrLn "Type in amount to send"
+    a <- getLine
+    --let amount = (read a :: Int)
+    -- TO DO: implement try & catch exception handler with Either monad
+
+    -- TO DO: implement validTransaction with pk
+    putStrLn s
+    putStrLn pk
+    putStrLn r
+    putStrLn a
+
+    program (pb, (bc ++ s))

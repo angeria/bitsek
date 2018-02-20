@@ -1,5 +1,4 @@
 import Bitsek
-main :: (Block, Blockchain)
 main (pb, bc) = do 
     menu
     action <- getLine
@@ -20,7 +19,7 @@ showBalance (pb, bc) = do
     let bal = checkBalance adress bc
     putStrLn $"You have "++(show bal)++" bitsek"
 
-{-sendBitsek :: (Block, Blockchain) -> IO ()
+sendBitsek :: (Block, Blockchain) -> IO ()
 sendBitsek (pb, bc) = do 
     putStrLn "To who from who and how much"
     putStrLn "Enter sender adress" 
@@ -42,4 +41,4 @@ sendBitsek (pb, bc) = do
     else do
         putStrLn "Bam, wrong password bro."
         return (pb, bc)
--}
+
