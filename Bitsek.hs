@@ -276,17 +276,20 @@ hashBlock block nonce = show $ hashWith SHA256 $ toByteString' $ (show nonce ++ 
 ---- APP -----
 --------------
 
+main :: IO b
 main = do 
     let initPendingBlock = (Block 0 [] 0 "")
     let initBlockchain = (Blockchain [genesisBlock])
     program (initPendingBlock, initBlockchain)
 
+program :: (Block, Blockchain) -> IO b
 program (pb, bc) = do 
     menu
     action <- getLine
     case action of 
         "sendBitsek" -> sendBitsek (pb, bc)
 
+menu :: IO ()
 menu = do 
     putStrLn "--------------------------------" 
     putStrLn "Menu"
@@ -298,6 +301,7 @@ menu = do
     putStrLn "What do you want to do?"
     putStrLn "--------------------------------" 
 
+sendBitsek :: (Block, Blockchain) -> IO b
 sendBitsek (pb, bc) = do 
     let pbIx = index pb
     let pbTs = transactions pb
