@@ -70,8 +70,12 @@ initialTransaction2 = Transaction hogge dave 0
 
 initialTransactions = [initialTransaction1, initialTransaction2]
 
-genesisBlock = Block {index = 0, transactions = initialTransactions, proof = 0, previousHash = (show $ hashWith SHA256 $ B.pack "plants are institutions")}
+genesisBlock = Block {index = 0, transactions = [], proof = 0, previousHash = (show $ hashWith SHA256 $ toByteString' "plants are institutions")}
 genesisBlockchain = Blockchain [genesisBlock]
+
+testBlock1 = Block {index = 1, transactions = [Transaction {sender = User {adress = "Benne", privateKey = "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992", balance = 100}, receiver = User {adress = "Fabbe", privateKey = "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da", balance = 100}, amount = 100}], proof = 911, previousHash = "000854f0985938bb5d557eadef1bbc8f1d0ab9bf46d58cecfdb774c87f2094c2"}
+testBlock2 = Block {index = 2, transactions = [Transaction {sender = User {adress = "Fabbe", privateKey = "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da", balance = 100}, receiver = User {adress = "Benne", privateKey = "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992", balance = 100}, amount = 20}], proof = 2719, previousHash = "00035fee66451dbc750d037bec5c5cb6e7f5e17c6a721e34db2de8be92d9dd1a"}
+testBlockchain = Blockchain [testBlock2, testBlock1, genesisBlock]
 
 ----------------
 -- BLOCKCHAIN --
