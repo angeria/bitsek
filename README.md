@@ -15,13 +15,17 @@ Benjamin Angeria, Holger Swartling and Fabian Haglund.
 * cryptonite
 * bytestring-conversion
 
-`$ cabal install cryptonite`
-`$ cabal install bytestring-conversion`
+```
+$ cabal install cryptonite`
+$ cabal install bytestring-conversion
+```
 
 ### Setup
 
-`$ ghc Bitsek.hs`
-`$ main`
+```
+$ ghc Bitsek.hs
+$ main
+```
 
 # Table of Contents
 
