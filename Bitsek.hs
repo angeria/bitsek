@@ -81,9 +81,9 @@ testBlock1 = Block {index = 1, transactions = [Transaction {sender = User {adres
 testBlock2 = Block {index = 2, transactions = [Transaction {sender = User {adress = "Fabbe", privateKey = "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da", balance = 100}, receiver = User {adress = "Benne", privateKey = "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992", balance = 100}, amount = 20}], proof = 2719, previousHash = "00035fee66451dbc750d037bec5c5cb6e7f5e17c6a721e34db2de8be92d9dd1a"}
 testBlockchain = Blockchain [testBlock2, testBlock1, genesisBlock]
 
-----------------
--- BLOCKCHAIN --
-----------------
+--------------------------
+-- BLOCKCHAIN FUNCTIONS --
+--------------------------
 
 {- 	addToBlockchain blockchain block
 	Adds a new block to an existing blockchain.
@@ -92,46 +92,6 @@ testBlockchain = Blockchain [testBlock2, testBlock1, genesisBlock]
 -}
 addToBlockchain :: Blockchain -> Block -> Blockchain
 addToBlockchain (Blockchain blocks) newBlock = Blockchain (newBlock:blocks)
-
-{- 	newBlock blockchain transaction
-	Creates a new block with a transaction.
-	RETURNS: A new block that contains transaction, which can be added to blockchain.
--}
-newBlock :: Blockchain -> Transaction -> Block
-newBlock blockchain newTransaction = Block newIndex [newTransaction] proof previousHash
-  where
-    newIndex = 1 + (index $ lastBlock blockchain)
-    proof = snd $ mineBlock (lastBlock blockchain)
-    previousHash = fst $ mineBlock (lastBlock blockchain)
-
-appendBlock :: Block -> Blockchain -> Blockchain
-appendBlock x (Blockchain xs) = (Blockchain (x:xs))
-
-{-  encryptPassword password
-    Takes a password and encrypts it with SHA256.
-    RETURNS: A hashed string of password.
-    EXAMPLE: encryptPassword "test" = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"
--}
-encryptPassword :: String -> String
-encryptPassword password = show $ hashWith SHA256 $ toByteString' password
-
-{-	validPassword user password
-	Checks if the password is valid for the given user.
-	RETURNS: Bool saying if password is valid for user.
-	EXAMPLE: validPassword fabbe "singularity" = True
--}
-validPassword :: User -> String -> Bool
-validPassword (User _ privateKey _) password
-    | (encryptPassword password) == privateKey = True
-    | otherwise = False 
-
-{-  lastBlock blockchain 
-    Takes a blockchain and returns the last block in it.
-    PRE: blockchain must be non-empty.
-    RETURNS: last block in blockchain.
--}
-lastBlock :: Blockchain -> Block
-lastBlock blockchain = case blockchain of Blockchain (x:xs) -> x
 
 {-	validBlockchain blockchain
 	Checks that a blockchain is valid by verifying that every block hash meets the proof of work precondition.
@@ -154,9 +114,35 @@ validBlockchainAux (x:xs)
    | hashBlock x (proof (head xs)) == (previousHash (head xs)) = validBlockchainAux xs
    | otherwise = False
 
-----------------------------------
--- BLOCKCHAIN UTILITY FUNCTIONS --
-----------------------------------
+{-  lastBlock blockchain 
+    Takes a blockchain and returns the last block in it.
+    PRE: blockchain must be non-empty.
+    RETURNS: last block in blockchain.
+-}
+lastBlock :: Blockchain -> Block
+lastBlock blockchain = case blockchain of Blockchain (x:xs) -> x
+
+--------------------
+-- USER FUNCTIONS --
+--------------------
+
+{-  encryptPassword password
+    Takes a password and encrypts it with SHA256.
+    RETURNS: A hashed string of password.
+    EXAMPLE: encryptPassword "test" = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"
+-}
+encryptPassword :: String -> String
+encryptPassword password = show $ hashWith SHA256 $ toByteString' password
+
+{-	validPassword user password
+	Checks if the password is valid for the given user.
+	RETURNS: Bool saying if password is valid for user.
+	EXAMPLE: validPassword fabbe "singularity" = True
+-}
+validPassword :: User -> String -> Bool
+validPassword (User _ privateKey _) password
+    | (encryptPassword password) == privateKey = True
+    | otherwise = False 
 
 aggUsers :: Blockchain -> [User]
 aggUsers b = aggUsersAux (allUsers b) (allTransactions b)
@@ -180,13 +166,6 @@ updateUser (User ad pkey balance) (Transaction sender receiver amount)
     | ad == (adress sender) = (User ad pkey (balance-amount))
     | ad == (adress receiver) = (User ad pkey (balance+amount))
     | otherwise = (User ad pkey balance)
-
-allTransactions :: Blockchain -> [Transaction]
-allTransactions (Blockchain blocks) = allTransactionsAux blocks
-
-allTransactionsAux :: [Block] -> [Transaction]
-allTransactionsAux [] = []
-allTransactionsAux (block:blocks) = transactions block ++ allTransactionsAux blocks
 
 allUsers :: Blockchain -> [User]
 allUsers b = uniqueUsers ((allSenders (allTransactions b)) ++ (allReceivers (allTransactions b))) []
@@ -227,33 +206,9 @@ getUserAux ad (u:us)
     | ad == adress u = u
     | otherwise = getUserAux ad us
 
-----------------------------
--- Proof of Work / Mining --
-----------------------------
-
-{-  mineBlock block
-    Runs a proof of work mechanism on block.
-    RETURNS: Hash of block beginning with three 0's and a proof.
--}
-mineBlock :: Block -> (String, Int)
-mineBlock block = mineBlockAux block 0
-
-mineBlockAux :: Block -> Int -> (String, Int)
-mineBlockAux block nonce
-    | head hashResult == '0' 
-        && hashResult !! 1 == '0'
-        && hashResult !! 2 == '0'
-        = (hashResult, nonce)
-    | otherwise = mineBlockAux block (nonce + 1)
-        where
-            hashResult = hashBlock block nonce
-
-{-  hashBlock block nonce
-    Takes a block and a nonce and hashes it with SHA256.
-    RETURNS: Hash of nonce (arbitrary number) and the information in block.
--}
-hashBlock :: Block -> Int -> String
-hashBlock block nonce = show $ hashWith SHA256 $ toByteString' $ (show nonce ++ previousHash block ++ transactionsToString block)
+---------------------------
+-- TRANSACTION FUNCTIONS --
+---------------------------
 
 {-  transactionsToString block
     Takes a block and returns a concatenation of the whole data structure into a string.
@@ -284,6 +239,51 @@ validTransaction blockchain (Transaction sender receiver amount) password =
             else False
         else False
 
+allTransactions :: Blockchain -> [Transaction]
+allTransactions (Blockchain blocks) = allTransactionsAux blocks
+
+allTransactionsAux :: [Block] -> [Transaction]
+allTransactionsAux [] = []
+allTransactionsAux (block:blocks) = transactions block ++ allTransactionsAux blocks
+
+----------------------------
+-- Mining / Proof of work --
+----------------------------
+
+{- 	newBlock blockchain transaction
+	Creates a new block with a transaction.
+	RETURNS: A new block that contains transaction, which can be added to blockchain.
+-}
+newBlock :: Blockchain -> Transaction -> Block
+newBlock blockchain newTransaction = Block newIndex [newTransaction] proof previousHash
+  where
+    newIndex = 1 + (index $ lastBlock blockchain)
+    proof = snd $ mineBlock (lastBlock blockchain)
+    previousHash = fst $ mineBlock (lastBlock blockchain)
+
+{-  mineBlock block
+    Runs a proof of work mechanism on block.
+    RETURNS: Hash of block beginning with three 0's and a proof.
+-}
+mineBlock :: Block -> (String, Int)
+mineBlock block = mineBlockAux block 0
+
+mineBlockAux :: Block -> Int -> (String, Int)
+mineBlockAux block nonce
+    | head hashResult == '0' 
+        && hashResult !! 1 == '0'
+        && hashResult !! 2 == '0'
+        = (hashResult, nonce)
+    | otherwise = mineBlockAux block (nonce + 1)
+        where
+            hashResult = hashBlock block nonce
+
+{-  hashBlock block nonce
+    Takes a block and a nonce and hashes it with SHA256.
+    RETURNS: Hash of nonce (arbitrary number) and the information in block.
+-}
+hashBlock :: Block -> Int -> String
+hashBlock block nonce = show $ hashWith SHA256 $ toByteString' $ (show nonce ++ previousHash block ++ transactionsToString block)
 
 --------------
 ---- APP -----
