@@ -81,9 +81,18 @@ testBlockchain = Blockchain [testBlock2, testBlock1, genesisBlock]
 -- BLOCKCHAIN --
 ----------------
 
+{- 	addToBlockchain blockchain block
+	Adds a new block to an existing blockchain.
+	RETURNS: blockchain with block inserted.
+	EXAMPLES: addToBlockchain (Blockchain [genesisBlock]) testBlock1 = Blockchain [testBlock1, genesisBlock]
+-}
 addToBlockchain :: Blockchain -> Block -> Blockchain
 addToBlockchain (Blockchain blocks) newBlock = Blockchain (newBlock:blocks)
 
+{- 	newBlock blockchain transaction
+	Creates a new block with a transaction.
+	RETURNS: A new block that contains transaction, which can be added to blockchain.
+-}
 newBlock :: Blockchain -> Transaction -> Block
 newBlock blockchain newTransaction = Block newIndex [newTransaction] proof previousHash
   where
@@ -92,13 +101,18 @@ newBlock blockchain newTransaction = Block newIndex [newTransaction] proof previ
     previousHash = fst $ mineBlock (lastBlock blockchain)
 
 {-  encryptPassword password
-    Takes a password and encrypts it.
+    Takes a password and encrypts it with SHA256.
     RETURNS: A hashed string of password.
     EXAMPLE: encryptPassword "test" = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"
 -}
 encryptPassword :: String -> String
 encryptPassword password = show $ hashWith SHA256 $ toByteString' password
 
+{-	validPassword user password
+	Checks if the password is valid for the given user.
+	RETURNS: Bool saying if password is valid for user.
+	EXAMPLE: validPassword fabbe "singularity" = True
+-}
 validPassword :: User -> String -> Bool
 validPassword (User _ privateKey _) password
     | (encryptPassword password) == privateKey = True
@@ -107,16 +121,26 @@ validPassword (User _ privateKey _) password
 {-  lastBlock blockchain 
     Takes a blockchain and returns the last block in it.
     PRE: blockchain must be non-empty.
+    RETURNS: last block in blockchain.
 -}
 lastBlock :: Blockchain -> Block
 lastBlock blockchain = case blockchain of Blockchain (x:xs) -> x
 
+{-	validBlockchain blockchain
+	Checks that a blockchain is valid by verifying that every block hash meets the proof of work precondition.
+	RETURNS: Bool saying if blockchain is valid or not.
+-}
 validBlockchain :: Blockchain -> Bool
 validBlockchain (Blockchain blocks) = validBlockchainAux reversedBlockchain 
     where 
         reversedBlockchain = reverse blocks
 
+{- 	validBlockchainAux blocks
+	Checks that every block in a list of blocks meets the proof of work precondition.
+	RETURNS: Bool saying if every block blocks is valid, or if at least one is incorrect.
+-}
 validBlockchainAux :: [Block] -> Bool
+-- VARIANT: Length of the list blocks.
 validBlockchainAux [] = True
 validBlockchainAux [x] = True
 validBlockchainAux (x:xs)
@@ -193,7 +217,7 @@ getUserAux ad (u:us)
 
 {-  mineBlock block
     Runs a proof of work mechanism on block.
-    RETURNS: Hash beginning with three 0's and a proof.
+    RETURNS: Hash of block beginning with three 0's and a proof.
 -}
 mineBlock :: Block -> (String, Int)
 mineBlock block = mineBlockAux block 0
@@ -209,7 +233,8 @@ mineBlockAux block nonce
             hashResult = hashBlock block nonce
 
 {-  hashBlock block nonce
-    Takes a block and a nonce and returns the hash of it.
+    Takes a block and a nonce and hashes it with SHA256.
+    RETURNS: Hash of nonce (arbitrary number) and the information in block.
 -}
 hashBlock :: Block -> Int -> String
 hashBlock block nonce = show $ hashWith SHA256 $ toByteString' $ (show nonce ++ previousHash block ++ transactionsToString block)
@@ -231,9 +256,12 @@ transactionsToString block = transactionsToStringAux (transactions block)
             userToString :: User -> String
             userToString (User adress _ balance) = adress ++ show balance
 
-
+{- 	validTransaction blockchain transaction password
+	Checks if the sender has enough funds and that the given password is valid.
+	RETURNS: Bool stating if transaction is valid.
+-}
 validTransaction :: Blockchain -> Transaction -> String -> Bool
-validTransaction blockchain (Transaction sender receiver amount) password= 
+validTransaction blockchain (Transaction sender receiver amount) password = 
     if validPassword sender password
         then if (userBalance sender blockchain) >= amount
             then True
