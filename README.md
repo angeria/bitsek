@@ -2,6 +2,14 @@
 
 A simple cryptocurrency in Haskell.
 
+# Table of Contents
+
+# Introduction
+
+## Inner workings
+The program runs client-side commands in main.hs but uses the computationally pure Bitsek.hs for more demanding calculations.
+
+
 ## About
 This is a Haskell project in the course "Program Design and Data Structures" during spring term 2018 at Uppsala University.
 
@@ -27,12 +35,6 @@ $ ghc Bitsek.hs
 $ main
 ```
 
-# Table of Contents
-
-# Introduction
-
-## Inner workings
-The program runs client-side commands in main.hs but uses the computationally pure Bitsek.hs for more demanding calculations.
 
 # This document should include:
 - A table of contents, an introduction, and summary of what the program does.
