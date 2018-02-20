@@ -1,20 +1,27 @@
-# Bitsek - a simple cryptocurrency implementation in Haskell
+# Bitsek
 
-# About
+A simple cryptocurrency in Haskell.
+
+## About
 This is a Haskell project in the course "Program Design and Data Structures" during spring term 2018 at Uppsala University.
 
-# Authors 
+## Authors 
 Benjamin Angeria, Holger Swartling and Fabian Haglund.
 
-# Setup
-Clone this repo to your desktop.
+## Installation
 
-Run cabal install "package name":
+### Requirements
+* GHC
+* cryptonite
+* bytestring-conversion
 
-- bytestring-conversion
-- cryptonite
+`$ cabal install cryptonite`
+`$ cabal install bytestring-conversion`
 
-Run main.hs
+### Setup
+
+`$ ghc Bitsek.hs`
+`$ main`
 
 # Table of Contents
 
