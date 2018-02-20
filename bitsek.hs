@@ -223,46 +223,27 @@ validTransaction blockchain (Transaction sender receiver amount) password=
 --------------
 ---- APP -----
 --------------
-main (pb, bc) = do 
-    putStrLn "welcome, what do you want to do?"
+main = do 
+    let initPendingBlock = "block"
+    let initBlockchain = "blockchain"
+    program(initPendingBlock, initBlockchain)
+
+program (pb, bc) = do 
+    menu
     action <- getLine
-    if action == "sendBitsek"
-        then putStrLn "hello"
-    else 
-        putStrLn "bye"
-{-
+    case action of 
+        "sendBitsek" -> putStrLn ("sending bitsek to" ++ pb)
+        "showBalance" -> putStrLn ("showing balance from" ++ bc)
+        "mine" -> putStrLn ("mining " ++ pb ++ "and adding to " ++ bc)
+
+
 menu = do 
+    putStrLn "--------------------------------" 
     putStrLn "Menu"
-    putStrLn "---------------------"
-    putStrLn "Send bitsek, enter: sendBitsek" 
-    putStrLn "Show balance, enter: showBalance"
-    putStrLn "Mine pending block, enter: mine"
-    putStrLn "---------------------"    
+    putStrLn "--------------------------------"
+    putStrLn "1. sendBitsek" 
+    putStrLn "2. showBalance"
+    putStrLn "3. mineBlock"
+    putStrLn "--------------------------------"    
     putStrLn "What do you want to do?"
--}
-sendBitsek (pb, bc) = do 
-    putStrLn "To who from who and how much"
-    
-    putStrLn "Enter sender adress" 
-    s <- getLine
-    let sender = (getUser s bc)
-
-    putStrLn "Enter sender password" 
-    password <- getLine
-
-    putStrLn "Enter receiver adress" 
-    r <- getLine 
-    let receiver = (getUser r newBlock)
-
-    putStrLn "Enter amount"
-    am <- getLine
-    let amount = (read am :: Int)
-
-    if (validTransaction bc (Transaction sender receiver amount) password)
-        then do
-            let pb' = (newBlock bc (Transaction sender receiver amount))
-            putStrLn "Hooray! Your transactions was cleared."
-            return (main (pb', bc))
-        else do
-            putStrLn "Bam, worng password bro."
-            return (main (pb, bc))
+    putStrLn "--------------------------------" 
