@@ -40,7 +40,7 @@ data Blockchain = Blockchain [Block] deriving (Show)
 -----------------------
 -- password: singularity
 fabbe = User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100
--- password: entropy
+-- password: entropy    
 benne = User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100
 people = [fabbe, benne]
 testTransaction = Transaction benne fabbe 100
