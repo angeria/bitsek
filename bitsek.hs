@@ -3,15 +3,23 @@
 -- Authors: Benjamin Angeria, Fabian Haglund and Holger Swartling. --
 ---------------------------------------------------------------------
 
+-------------
+-- IMPORTS --
+-------------
+
+-- Cryptographic hash functions.
 import Crypto.Hash
-import Data.ByteString (ByteString)
-import qualified Data.ByteString.Char8 as B
-import Data.Binary
+
+-- Functions to convert to and from bytestrings which can be hashed.
 import Data.ByteString.Conversion
+
+----------------
+-- DATA TYPES --
+----------------
 
 {-  User Adress PrivateKey Balance
     - Adress: A public adress that money can be sent to.
-    - PrivateKey: A secret password needed to complete a transaction from the users wallet.
+    - PrivateKey: The hash of a secret password needed to send a transaction from the users wallet.
     - Balance: The user's total funds.
 -}
 data User = User { adress :: String
@@ -25,11 +33,11 @@ data Transaction = Transaction { sender :: User
                                } deriving (Show)
 
 {-  Block
-    A block with some information.
-        Index: The index of the block, where the first block in the blockchain has index 0.
+    A block with the following information:
+        Index: The index of the block, where the first block in the blockchain (the "genesis block") has index 0.
         Transactions: A list of all the transactions in that block.
-        Proof: The nonce (an arbitary Int) that when hashed with the previous block gives a hash that matches a predefined condition.
-        previousHash: The hash of the block before the current block in the blockchain.
+        Proof: The nonce (an arbitrary Int), that when hashed with the previous block gives a string that matches a predefined condition.
+        PreviousHash: The hash of the block before the current block in the blockchain.
 -}
 data Block = Block { index :: Int 
                    , transactions :: [Transaction]
@@ -40,31 +48,29 @@ data Block = Block { index :: Int
 {-  Blockchain
     Represents a list of blocks.
     INVARIANT: The latest block has to be the head of the list of blocks.
+
 -}
 data Blockchain = Blockchain [Block] deriving (Show)
 
------------------------
--- TESTING VARIABLES --
------------------------
+-------------------------
+-- TESTING IDENTIFIERS --
+-------------------------
+
 -- password: singularity
 fabbe = User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100
 -- password: entropy
 benne = User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100
 people = [fabbe, benne]
-testTransaction = Transaction benne fabbe 100
--- testBlockchain = Blockchain [testBlock2, testBlock1, genesisBlock]
-genesisBlock = Block {index = 0, transactions = [], proof = 0, previousHash = (show $ hashWith SHA256 $ B.pack "plants are institutions")}
-genesisBlockchain = Blockchain [genesisBlock]
-testBlockchain1 = Blockchain [Block {index = 1, transactions = [Transaction (User {adress = "Benne", privateKey = "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992", balance = 100}) (User {adress = "Fabbe", privateKey = "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da", balance = 100}) 100], proof = 911, previousHash = "000854f0985938bb5d557eadef1bbc8f1d0ab9bf46d58cecfdb774c87f2094c2"}
-                             ,Block {index = 0, transactions = [], proof = 0, previousHash = "a2f2e5f03072b1b8d0b5ad55a1d3da642f1c327ce8e5de89385651176743fb39"}]
-testBlockchain2 = Blockchain [Block {index = 2, transactions = [Transaction (User {adress = "Benne", privateKey = "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992", balance = 100}) (User {adress = "Fabbe", privateKey = "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da", balance = 100}) 100], proof = 2719, previousHash = "00035fee66451dbc750d037bec5c5cb6e7f5e17c6a721e34db2de8be92d9dd1a"}
-                             ,Block {index = 1, transactions = [Transaction (User {adress = "Benne", privateKey = "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992", balance = 100}) (User {adress = "Fabbe", privateKey = "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da", balance = 100}) 100], proof = 911, previousHash = "000854f0985938bb5d557eadef1bbc8f1d0ab9bf46d58cecfdb774c87f2094c2"}
-                             ,Block {index = 0, transactions = [], proof = 0, previousHash = "a2f2e5f03072b1b8d0b5ad55a1d3da642f1c327ce8e5de89385651176743fb39"}]
 
-hoggerBlock1 = Block {index = 1, transactions = [Transaction (User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100) (User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100) 52], proof = 911, previousHash = "000854f0985938bb5d557eadef1bbc8f1d0ab9bf46d58cecfdb774c87f2094c2"}
-hoggerBlock2 = Block {index = 2, transactions = [Transaction (User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100) (User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100) 22,Transaction (User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100) (User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100) 27], proof = 2719, previousHash = "00035fee66451dbc750d037bec5c5cb6e7f5e17c6a721e34db2de8be92d9dd1a"}
-hoggerBlock3 = Block {index = 3, transactions = [Transaction (User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100) (User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100) 31,Transaction (User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100) (User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100) 82,Transaction (User "Benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 100) (User "Fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 100) 12], proof = 1462, previousHash = "000970c8c3edafbf06fd059fd7bd30436eb8c6afd451004d8d5339f5bf0067da"}
-hoggerChain = Blockchain [hoggerBlock3, hoggerBlock2, hoggerBlock1, genesisBlock]
+testTransaction1 = Transaction benne fabbe 100
+testTransaction2 = Transaction fabbe benne 20
+
+genesisBlock = Block {index = 0, transactions = [], proof = 0, previousHash = (show $ hashWith SHA256 $ toByteString' "plants are institutions")}
+genesisBlockchain = Blockchain [genesisBlock]
+
+testBlock1 = Block {index = 1, transactions = [Transaction {sender = User {adress = "Benne", privateKey = "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992", balance = 100}, receiver = User {adress = "Fabbe", privateKey = "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da", balance = 100}, amount = 100}], proof = 911, previousHash = "000854f0985938bb5d557eadef1bbc8f1d0ab9bf46d58cecfdb774c87f2094c2"}
+testBlock2 = Block {index = 2, transactions = [Transaction {sender = User {adress = "Fabbe", privateKey = "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da", balance = 100}, receiver = User {adress = "Benne", privateKey = "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992", balance = 100}, amount = 20}], proof = 2719, previousHash = "00035fee66451dbc750d037bec5c5cb6e7f5e17c6a721e34db2de8be92d9dd1a"}
+testBlockchain = Blockchain [testBlock2, testBlock1, genesisBlock]
 
 ----------------
 -- BLOCKCHAIN --
