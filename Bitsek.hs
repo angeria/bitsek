@@ -87,6 +87,9 @@ newBlock blockchain newTransaction = Block newIndex [newTransaction] proof previ
     proof = snd $ mineBlock (lastBlock blockchain)
     previousHash = fst $ mineBlock (lastBlock blockchain)
 
+appendBlock :: Block -> Blockchain -> Blockchain
+appendBlock x (Blockchain xs) = (Blockchain (x:xs))
+
 {-  encryptPassword password
     Takes a password and encrypts it.
     RETURNS: A hashed string of password.
@@ -275,7 +278,7 @@ menu = do
     putStrLn "--------------------------------" 
 
 blockMiner (pb, bc) = do
-    let bc' = (mineBlock pb):bc
+    let bc' = (appendBlock (mineBlock pb) bc)
     let pb' = (Block ((index pb)+1) [] 0 "") 
     program (pb', bc')
 
