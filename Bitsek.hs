@@ -327,7 +327,6 @@ sendBitsek (pb, bc) = do
     let t = (Transaction sender receiver amount)
 
     -- TO DO: implement validTransaction with pk
-    --program ((Block pbIx, (pbTs ++ t), pbPf, pbPh), bc)
     let pb' = Block pbIx (pbTs ++ [t]) pbPf pbPh
 
     program (pb', bc)
