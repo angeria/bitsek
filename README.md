@@ -31,8 +31,9 @@ $ main
 
 # Introduction
 
-# Inner workings
+## Inner workings
 The program runs client-side commands in main.hs but uses the computationally pure Bitsek.hs for more demanding calculations.
+
 # This document should include:
 - A table of contents, an introduction, and summary of what the program does.
 - Use cases: a guide for how to actually use your program, including key examples.
