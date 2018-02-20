@@ -1,8 +1,11 @@
+import Bitsek
+main :: (Block, Blockchain)
 main (pb, bc) = do 
     menu
     action <- getLine
     case action of 
         "sendBitsek" -> sendBitsek (pb, bc)
+        "showBalance" -> showBalance (pb, bc)
 
 menu = do 
     putStrLn "Menu"
@@ -11,13 +14,13 @@ menu = do
     putStrLn "Mine pending block, enter: mine"
     putStrLn "What do you want to do?"
 
-balance (pb, bc) = do
+showBalance (pb, bc) = do
     putStrLn "What user balance do you want to snoop?"
     adress <- getLine
-    bal = checkBalance adress bc
+    let bal = checkBalance adress bc
     putStrLn $"You have "++(show bal)++" bitsek"
 
-sendBitsek :: (Block, Blockchain) -> IO ()
+{-sendBitsek :: (Block, Blockchain) -> IO ()
 sendBitsek (pb, bc) = do 
     putStrLn "To who from who and how much"
     putStrLn "Enter sender adress" 
@@ -37,5 +40,6 @@ sendBitsek (pb, bc) = do
             putStrLn "Hooray! Your transactions was cleared."
             return (main (pb', bc))
     else do
-        putStrLn "Bam, worng password bro."
+        putStrLn "Bam, wrong password bro."
         return (pb, bc)
+-}

@@ -2,12 +2,14 @@
 --                 Haskell Project: Bitsek                         --
 -- Authors: Benjamin Angeria, Fabian Haglund and Holger Swartling. --
 ---------------------------------------------------------------------
-
 import Crypto.Hash
 import Data.ByteString (ByteString)
 import qualified Data.ByteString.Char8 as B
 import Data.Binary
 import Data.ByteString.Conversion
+
+module Bitsek
+where
 
 {-  User Adress PrivateKey Balance
     - Adress: A public adress that money can be sent to.
