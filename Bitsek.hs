@@ -3,15 +3,23 @@
 -- Authors: Benjamin Angeria, Fabian Haglund and Holger Swartling. --
 ---------------------------------------------------------------------
 
+-------------
+-- IMPORTS --
+-------------
+
+-- Cryptographic hash functions.
 import Crypto.Hash
-import Data.ByteString (ByteString)
-import qualified Data.ByteString.Char8 as B
-import Data.Binary
+
+-- Functions to convert to and from bytestrings which can be hashed.
 import Data.ByteString.Conversion
+
+----------------
+-- DATA TYPES --
+----------------
 
 {-  User Adress PrivateKey Balance
     - Adress: A public adress that money can be sent to.
-    - PrivateKey: A secret password needed to complete a transaction from the users wallet.
+    - PrivateKey: The hash of a secret password needed to send a transaction from the users wallet.
     - Balance: The user's total funds.
 -}
 data User = User { adress :: String
@@ -24,13 +32,24 @@ data Transaction = Transaction { sender :: User
                                , amount :: Int
                                } deriving (Show)
 
+{-  Block
+    A block with the following information:
+        Index: The index of the block, where the first block in the blockchain (the "genesis block") has index 0.
+        Transactions: A list of all the transactions in that block.
+        Proof: The nonce (an arbitrary Int), that when hashed with the previous block gives a string that matches a predefined condition.
+        PreviousHash: The hash of the block before the current block in the blockchain.
+-}
 data Block = Block { index :: Int 
                    , transactions :: [Transaction]
                    , proof :: Int
                    , previousHash :: String
                    } deriving (Show)
 
--- Latest block should be head of list.
+{-  Blockchain
+    Represents a list of blocks.
+    INVARIANT: The latest block has to be the head of the list of blocks.
+
+-}
 data Blockchain = Blockchain [Block] deriving (Show)
 
 -----------------------
