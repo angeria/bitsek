@@ -30,7 +30,7 @@ menu = do
     putStrLn "--------------------------------"
     putStrLn "Type what's inside the square brackets."
     putStrLn ""
-    putStrLn "1. Send Bitsek ->[send]" 
+    putStrLn "1. Send Bitsek [send]" 
     putStrLn "2. Check balance [balance]"
     putStrLn "3. Mine [mine]"
     putStrLn "4. Show verified transactions [show]"
