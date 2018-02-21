@@ -18,6 +18,7 @@ program (pb, bc) = do
         "sendBitsek" -> sendBitsek (pb, bc)
         "showBalance" -> showBalance (pb, bc)
         "mineBitsek" -> mineBitsek (pb, bc)
+        "showVerifiedTransactions" -> printTransactions (pb, bc)
 
 menu :: IO ()
 menu = do 
@@ -27,6 +28,7 @@ menu = do
     putStrLn "1. sendBitsek" 
     putStrLn "2. showBalance"
     putStrLn "3. mineBitsek"
+    putStrLn "4. showVerifiedTransactions"
     putStrLn "--------------------------------"    
     putStrLn "What do you want to do?"
     putStrLn "--------------------------------" 
@@ -98,3 +100,19 @@ mineBitsek (pb, bc) = do
     getChar
 
     program (pb', bc')
+
+printTransactions :: (Block, Blockchain) -> IO b
+printTransactions (pb, bc) = do
+    let ts = allTransactions bc
+    printTransactionsAux ts
+    program (pb, bc)
+
+printTransactionsAux :: [Transaction] -> IO ()
+printTransactionsAux [] = putStrLn ""
+printTransactionsAux (t:ts) = do
+    let s = adress (sender t)
+    let r = adress (receiver t)
+    let a = show (amount t)
+    let tstr = ("From: " ++ s ++ "  |  To: " ++ r ++ "  |  Amount: " ++ a)
+    putStrLn tstr
+    printTransactionsAux ts
