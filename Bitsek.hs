@@ -67,12 +67,7 @@ hogge = User "hogge" "01d9db6e08b2426c3c56122aca300c143a60157de6899d6bc84614c40d
 -- password: monadsforbreakfast
 dave = User "dave" "4c7be2f6d37d20fe95050f329b58bcb3b552c3544260b14319964314b38ad416" 1000
 
-initialTransaction1 = Transaction fabbe benne 0
-initialTransaction2 = Transaction hogge dave 0
-
-initialTransactions = [initialTransaction1, initialTransaction2]
-
-genesisBlock = Block {index = 0, transactions = initialTransactions, proof = 0, previousHash = (show $ hashWith SHA256 $ toByteString' "plants are institutions")}
+genesisBlock = Block {index = 0, transactions = [], proof = 0, previousHash = (show $ hashWith SHA256 $ toByteString' "plants are institutions")}
 genesisBlockchain = Blockchain [genesisBlock]
 
 testBlock1 = Block {index = 1, transactions = [Transaction {sender = User {adress = "Benne", privateKey = "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992", balance = 100}, receiver = User {adress = "Fabbe", privateKey = "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da", balance = 100}, amount = 100}], proof = 911, previousHash = "000854f0985938bb5d557eadef1bbc8f1d0ab9bf46d58cecfdb774c87f2094c2"}
@@ -142,16 +137,31 @@ validPassword (User _ privateKey _) password
     | (encryptPassword password) == privateKey = True
     | otherwise = False 
 
-aggUsers :: Blockchain -> [User]
-aggUsers b = aggUsersAux (allUsers b) (allTransactions b)
+{-	userBalance user blockchain
+	
+	RETURNS: 
+	EXAMPLE:
+-}
+userBalance :: User -> Blockchain -> Int
+userBalance user blockchain = balance (aggUser user (allTransactions blockchain))    
+
+{-	userBalance user blockchain
+	
+	RETURNS: 
+	EXAMPLE:
+-}
+aggUsers :: [User] -> Blockchain -> [User]
+aggUsers us b = aggUsersAux us (allTransactions b)
 
 aggUsersAux :: [User] -> [Transaction] -> [User]
 aggUsersAux [] _ = []
 aggUsersAux (u:us) ts = aggUser u ts : aggUsersAux us ts
 
-userBalance :: User -> Blockchain -> Int
-userBalance user blockchain = balance (aggUser user (allTransactions blockchain))
-
+{-	userBalance user blockchain
+	
+	RETURNS: 
+	EXAMPLE:
+-}
 aggUser :: User -> [Transaction] -> User
 aggUser u [] = u
 aggUser u (t:ts) = aggUser (updateUser u t) ts
@@ -162,6 +172,9 @@ updateUser (User ad pkey balance) (Transaction sender receiver amount)
     | ad == (adress receiver) = (User ad pkey (balance+amount))
     | otherwise = (User ad pkey balance)
 
+
+
+-- Returns a list of all users (but not necessarily with the correct current balance)
 allUsers :: Blockchain -> [User]
 allUsers b = uniqueUsers ((allSenders (allTransactions b)) ++ (allReceivers (allTransactions b))) []
 
@@ -186,8 +199,18 @@ allReceivers :: [Transaction] -> [User]
 allReceivers [] = []
 allReceivers (t:ts) = receiver t : allReceivers ts
 
-getUser :: String -> Blockchain -> User 
-getUser ad b = getUserAux ad (aggUsers b)
+
+
+
+
+
+{- getUser adress blockchain
+Returns the user with the given adress, with correct current balance
+PRE: 
+POST: User has correct balance
+-}
+getUser :: String -> [User] -> Blockchain -> User 
+getUser ad us b = getUserAux ad (aggUsers us b)
 
 getUserAux :: String -> [User] -> User
 getUserAux ad [] = (User "User" "Not Found" 0)
@@ -283,7 +306,3 @@ mineBlockAux block nonce
 -}
 hashBlock :: Block -> Int -> String
 hashBlock block nonce = show $ hashWith SHA256 $ toByteString' $ (show nonce ++ previousHash block ++ transactionsToString block)
-
-
-
-

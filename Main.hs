@@ -8,18 +8,19 @@ main :: IO b
 main = do 
     let initPendingBlock = (Block 0 [] 0 "")
     let initBlockchain = (Blockchain [genesisBlock])
-    program (initPendingBlock, initBlockchain)
+    let initUsers = [fabbe, benne, hogge, dave]
+    program (initPendingBlock, initBlockchain, initUsers)
 
-program :: (Block, Blockchain) -> IO b
-program (pb, bc) = do 
+program :: (Block, Blockchain, [User]) -> IO b
+program (pb, bc, us) = do 
     menu
     action <- getLine
     case action of 
-        "sendBitsek" -> sendBitsek (pb, bc)
-        "showBalance" -> showBalance (pb, bc)
-        "mineBitsek" -> mineBitsek (pb, bc)
-        "showVerifiedTransactions" -> printTransactions (pb, bc)
-        "showUsers" -> printUsers (pb, bc)
+        "sendBitsek" -> sendBitsek (pb, bc, us)
+        "showBalance" -> showBalance (pb, bc, us)
+        "mineBitsek" -> mineBitsek (pb, bc, us)
+        "showVerifiedTransactions" -> printTransactions (pb, bc, us)
+        "showUsers" -> printUsers (pb, bc, us)
 
 menu :: IO ()
 menu = do 
@@ -35,8 +36,8 @@ menu = do
     putStrLn "What do you want to do?"
     putStrLn "--------------------------------" 
 
-sendBitsek :: (Block, Blockchain) -> IO b
-sendBitsek (pb, bc) = do 
+sendBitsek :: (Block, Blockchain, [User]) -> IO b
+sendBitsek (pb, bc, us) = do 
     let pbIx = index pb
     let pbTs = transactions pb
     let pbPf = proof pb
@@ -44,7 +45,7 @@ sendBitsek (pb, bc) = do
 
     putStrLn "Type in sender adress: "
     s <- getLine
-    let sender = (getUser s bc)
+    let sender = (getUser s us bc)
     -- What if user not found? how to handle?
 
     putStrLn "Type in sender password: "
@@ -52,7 +53,7 @@ sendBitsek (pb, bc) = do
 
     putStrLn "Type in receiver adress"
     r <- getLine
-    let receiver = (getUser r bc)
+    let receiver = (getUser r us bc)
     -- What if user not found? how to handle?
 
     putStrLn "Type in amount to send"
@@ -65,28 +66,28 @@ sendBitsek (pb, bc) = do
     if validTransaction bc t pw
         then do
             let pb' = (Block pbIx (pbTs ++ [t]) pbPf pbPh)
-            program (pb', bc)
+            program (pb', bc, us)
         else do
             putStrLn "Transaction denied. Wrong password or insufficient funds."
             putStrLn "Redirecting back to menu."
-            program (pb, bc)
+            program (pb, bc, us)
 
-showBalance :: (Block, Blockchain) -> IO b
-showBalance (pb, bc) = do
+showBalance :: (Block, Blockchain, [User]) -> IO b
+showBalance (pb, bc, us) = do
 
     putStrLn "Input adress:"
     username <- getLine
     putStrLn ("Account balance of user " ++ username ++ " is:")
-    let user = getUser username bc
+    let user = getUser username us bc
     putStrLn ((show $ balance user) ++ " Bitsek")
 
     putStrLn "Press enter to go back to main menu."
     getChar
 
-    program (pb, bc)
+    program (pb, bc, us)
 
-mineBitsek :: (Block, Blockchain) -> IO b
-mineBitsek (pb, bc) = do
+mineBitsek :: (Block, Blockchain, [User]) -> IO b
+mineBitsek (pb, bc, us) = do
 
     let bc' = addToBlockchain bc (newBlockIO bc pb)
     let pb' = (Block 0 [] 0 "")
@@ -101,16 +102,16 @@ mineBitsek (pb, bc) = do
     putStrLn "Press enter to go back to main menu."
     getChar
 
-    program (pb', bc')
+    program (pb', bc', us)
 
-printTransactions :: (Block, Blockchain) -> IO b
-printTransactions (pb, bc) = do
+printTransactions :: (Block, Blockchain, [User]) -> IO b
+printTransactions (pb, bc, us) = do
     putStrLn "--------------------------------" 
     printTransactionsAux (allTransactions bc)
 
     putStrLn "Press enter to go back to main menu."
     getChar
-    program (pb, bc)
+    program (pb, bc, us)
 
 printTransactionsAux :: [Transaction] -> IO ()
 printTransactionsAux [] = putStrLn ""
@@ -121,14 +122,14 @@ printTransactionsAux (t:ts) = do
     putStrLn ("From: " ++ s ++ "  |  To: " ++ r ++ "  |  Amount: " ++ a)
     printTransactionsAux ts
 
-printUsers :: (Block, Blockchain) -> IO b
-printUsers (pb, bc) = do 
+printUsers :: (Block, Blockchain, [User]) -> IO b
+printUsers (pb, bc, us) = do 
     putStrLn "--------------------------------" 
-    printUsersAux (allUsers bc)
+    printUsersAux (aggUsers us bc)
     
     putStrLn "Press enter to go back to main menu."
     getChar
-    program (pb, bc)
+    program (pb, bc, us)
 
 printUsersAux :: [User] -> IO ()
 printUsersAux [] = putStrLn ""
