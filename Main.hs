@@ -104,6 +104,9 @@ mineBitsek (pb, bc) = do
 printTransactions :: (Block, Blockchain) -> IO b
 printTransactions (pb, bc) = do
     printTransactionsAux (allTransactions bc)
+    putStrLn "Press enter to go back to main menu."
+    getChar
+
     program (pb, bc)
 
 printTransactionsAux :: [Transaction] -> IO ()
