@@ -84,8 +84,8 @@ showBalance (pb, bc) = do
 mineBitsek :: (Block, Blockchain) -> IO b
 mineBitsek (pb, bc) = do
 
-    let newBlockchain = addToBlockchain bc (newBlockIO bc pb)
-    let initPendingBlock = (Block 0 [] 0 "")
+    let bc' = addToBlockchain bc (newBlockIO bc pb)
+    let pb' = (Block 0 [] 0 "")
 
     putStrLn "--------------------------------" 
     putStrLn "Result:" 
@@ -97,4 +97,4 @@ mineBitsek (pb, bc) = do
     putStrLn "Press enter to go back to main menu."
     getChar
 
-    program (initPendingBlock, newBlockchain)
+    program (pb', bc')
