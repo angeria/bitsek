@@ -172,38 +172,6 @@ updateUser (User ad pkey balance) (Transaction sender receiver amount)
     | ad == (adress receiver) = (User ad pkey (balance+amount))
     | otherwise = (User ad pkey balance)
 
-
-
--- Returns a list of all users (but not necessarily with the correct current balance)
-allUsers :: Blockchain -> [User]
-allUsers b = uniqueUsers ((allSenders (allTransactions b)) ++ (allReceivers (allTransactions b))) []
-
--- PRE: shall be invoked with ys == []
-uniqueUsers :: [User] -> [User] -> [User]
-uniqueUsers [] ys = ys
-uniqueUsers (x:xs) ys
-    | userExist x ys = uniqueUsers xs ys
-    | otherwise = uniqueUsers xs (x:ys)
-
-userExist :: User -> [User] -> Bool
-userExist u [] = False
-userExist u (x:xs)
-    | adress u == adress x = True
-    | otherwise = userExist u xs
-
-allSenders :: [Transaction] -> [User]
-allSenders [] = []
-allSenders (t:ts) = sender t : allSenders ts
-
-allReceivers :: [Transaction] -> [User]
-allReceivers [] = []
-allReceivers (t:ts) = receiver t : allReceivers ts
-
-
-
-
-
-
 {- getUser adress blockchain
 Returns the user with the given adress, with correct current balance
 PRE: 
