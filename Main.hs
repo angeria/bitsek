@@ -41,6 +41,7 @@ sendBitsek (pb, bc) = do
     putStrLn "Type in sender adress: "
     s <- getLine
     let sender = (getUser s bc)
+    -- What if user not found? how to handle?
 
     putStrLn "Type in sender password: "
     pw <- getLine
@@ -48,6 +49,7 @@ sendBitsek (pb, bc) = do
     putStrLn "Type in receiver adress"
     r <- getLine
     let receiver = (getUser r bc)
+    -- What if user not found? how to handle?
 
     putStrLn "Type in amount to send"
     a <- getLine
@@ -56,13 +58,14 @@ sendBitsek (pb, bc) = do
 
     let t = (Transaction sender receiver amount)
 
-    -- TO DO: implement validTransaction with pk
-    let pb' = Block pbIx (pbTs ++ [t]) pbPf pbPh
-
-    putStrLn "Press enter to go back to main menu."
-    getChar
-
-    program (pb', bc)
+    if validTransaction bc t pw
+        then do
+            let pb' = (Block pbIx (pbTs ++ [t]) pbPf pbPh)
+            program (pb', bc)
+        else do
+            putStrLn "Transaction denied. Wrong password or insufficient funds."
+            putStrLn "Redirecting back to menu."
+            program (pb, bc)
 
 showBalance :: (Block, Blockchain) -> IO b
 showBalance (pb, bc) = do
