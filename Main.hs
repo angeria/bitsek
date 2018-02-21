@@ -11,6 +11,13 @@ main = do
     let initUsers = [fabbe, benne, hogge, dave]
     program (initPendingBlock, initBlockchain, initUsers)
 
+{-
+
+ PRE:
+ POST: 
+ RETURNS:
+ EXAMPLE:
+-}
 program :: (Block, Blockchain, [User]) -> IO b
 program (pb, bc, us) = do 
     menu
@@ -23,6 +30,9 @@ program (pb, bc, us) = do
         "new" -> createUser (pb, bc, us)
         "list" -> printUsers (pb, bc, us)
 
+{-
+    Trivial menu output
+-}
 menu :: IO ()
 menu = do 
     putStrLn "--------------------------------" 
@@ -40,6 +50,13 @@ menu = do
     putStrLn "What do you want to do?"
     putStrLn "--------------------------------" 
 
+{-
+
+ PRE:
+ POST: 
+ RETURNS:
+ EXAMPLE:
+-}
 sendBitsek :: (Block, Blockchain, [User]) -> IO b
 sendBitsek (pb, bc, us) = do 
     let pbIx = index pb
@@ -76,6 +93,13 @@ sendBitsek (pb, bc, us) = do
             putStrLn "Redirecting back to menu."
             program (pb, bc, us)
 
+{-
+
+ PRE:
+ POST: 
+ RETURNS:
+ EXAMPLE:
+-}
 showBalance :: (Block, Blockchain, [User]) -> IO b
 showBalance (pb, bc, us) = do
 
@@ -90,6 +114,13 @@ showBalance (pb, bc, us) = do
 
     program (pb, bc, us)
 
+{-
+
+ PRE:
+ POST: 
+ RETURNS:
+ EXAMPLE:
+-}
 mineBitsek :: (Block, Blockchain, [User]) -> IO b
 mineBitsek (pb, bc, us) = do
 
@@ -108,6 +139,13 @@ mineBitsek (pb, bc, us) = do
 
     program (pb', bc', us)
 
+{-
+
+ PRE:
+ POST: 
+ RETURNS:
+ EXAMPLE:
+-}
 printTransactions :: (Block, Blockchain, [User]) -> IO b
 printTransactions (pb, bc, us) = do
     putStrLn "--------------------------------" 
@@ -126,6 +164,13 @@ printTransactionsAux (t:ts) = do
     putStrLn ("From: " ++ s ++ "  |  To: " ++ r ++ "  |  Amount: " ++ a)
     printTransactionsAux ts
 
+{-
+
+ PRE:
+ POST: 
+ RETURNS:
+ EXAMPLE:
+-}
 printUsers :: (Block, Blockchain, [User]) -> IO b
 printUsers (pb, bc, us) = do 
     putStrLn "--------------------------------" 
@@ -143,6 +188,13 @@ printUsersAux (u:us) = do
     putStrLn ("Public adress: " ++ ad ++ " | Balance: " ++ bal)
     printUsersAux us
 
+{-
+
+ PRE:
+ POST: 
+ RETURNS:
+ EXAMPLE:
+-}
 createUser :: (Block, Blockchain, [User]) -> IO b    
 createUser (pb, bc, us) = do
     putStrLn "--------------------------------" 
