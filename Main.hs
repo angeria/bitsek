@@ -16,22 +16,26 @@ program (pb, bc, us) = do
     menu
     action <- getLine
     case action of 
-        "sendBitsek" -> sendBitsek (pb, bc, us)
-        "showBalance" -> showBalance (pb, bc, us)
-        "mineBitsek" -> mineBitsek (pb, bc, us)
-        "showVerifiedTransactions" -> printTransactions (pb, bc, us)
-        "showUsers" -> printUsers (pb, bc, us)
+        "send" -> sendBitsek (pb, bc, us)
+        "balance" -> showBalance (pb, bc, us)
+        "mine" -> mineBitsek (pb, bc, us)
+        "show" -> printTransactions (pb, bc, us)
+        "new" -> createUser (pb, bc, us)
+        "list" -> printUsers (pb, bc, us)
 
 menu :: IO ()
 menu = do 
     putStrLn "--------------------------------" 
     putStrLn "Menu"
     putStrLn "--------------------------------"
-    putStrLn "1. sendBitsek" 
-    putStrLn "2. showBalance"
-    putStrLn "3. mineBitsek"
-    putStrLn "4. showVerifiedTransactions"
-    putStrLn "5. showUsers"
+    putStrLn "Type what's inside the square brackets."
+    putStrLn ""
+    putStrLn "1. Send Bitsek ->[send]" 
+    putStrLn "2. Check balance [balance]"
+    putStrLn "3. Mine [mine]"
+    putStrLn "4. Show verified transactions [show]"
+    putStrLn "5. Create a new user [new]"
+    putStrLn "6. List all users [list]"
     putStrLn "--------------------------------"    
     putStrLn "What do you want to do?"
     putStrLn "--------------------------------" 
@@ -138,3 +142,25 @@ printUsersAux (u:us) = do
     let bal = show (balance u)
     putStrLn ("Public adress: " ++ ad ++ " | Balance: " ++ bal)
     printUsersAux us
+
+createUser :: (Block, Blockchain, [User]) -> IO b    
+createUser (pb, bc, us) = do
+    putStrLn "--------------------------------" 
+    putStrLn "Choose an adress"
+    ad <- getLine
+
+    putStrLn "Choose a password"
+    pw <- getLine
+    let pk = encryptPassword pw
+
+    let u = (User ad pk 1000)
+    putStrLn ""
+    putStrLn ("Welcome to the world of Bitsek, " ++ ad ++ "!")
+    putStrLn "Your starting balance is 1000 Bitsek"
+    putStrLn ""
+
+    let us' = u:us
+
+    putStrLn "Press enter to go back to main menu."
+    getChar
+    program (pb, bc, us')
