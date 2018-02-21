@@ -3,6 +3,8 @@
 -- Authors: Benjamin Angeria, Fabian Haglund and Holger Swartling. --
 ---------------------------------------------------------------------
 
+module Bitsek where
+
 -------------
 -- IMPORTS --
 -------------
@@ -237,6 +239,7 @@ allTransactionsAux (block:blocks) = transactions block ++ allTransactionsAux blo
 -- Mining / Proof of work --
 ----------------------------
 
+-- CAN MAYBE BE REMOVED? 
 {- 	newBlock blockchain transaction
 	Creates a new block with a transaction.
 	RETURNS: A new block that contains transaction, which can be added to blockchain.
@@ -245,6 +248,15 @@ newBlock :: Blockchain -> Transaction -> Block
 newBlock blockchain newTransaction = Block newIndex [newTransaction] proof previousHash
   where
     newIndex = 1 + (index $ lastBlock blockchain)
+    proof = snd $ mineBlock (lastBlock blockchain)
+    previousHash = fst $ mineBlock (lastBlock blockchain)
+
+-- Works with the client side.
+newBlockIO :: Blockchain -> Block -> Block
+newBlockIO blockchain block = Block newIndex newTransactions proof previousHash
+  where
+    newIndex = 1 + (index $ lastBlock blockchain)
+    newTransactions = transactions block
     proof = snd $ mineBlock (lastBlock blockchain)
     previousHash = fst $ mineBlock (lastBlock blockchain)
 
@@ -272,61 +284,6 @@ mineBlockAux block nonce
 hashBlock :: Block -> Int -> String
 hashBlock block nonce = show $ hashWith SHA256 $ toByteString' $ (show nonce ++ previousHash block ++ transactionsToString block)
 
---------------
----- APP -----
---------------
 
-main :: IO b
-main = do 
-    let initPendingBlock = (Block 0 [] 0 "")
-    let initBlockchain = (Blockchain [genesisBlock])
-    program (initPendingBlock, initBlockchain)
 
-program :: (Block, Blockchain) -> IO b
-program (pb, bc) = do 
-    menu
-    action <- getLine
-    case action of 
-        "sendBitsek" -> sendBitsek (pb, bc)
 
-menu :: IO ()
-menu = do 
-    putStrLn "--------------------------------" 
-    putStrLn "Menu"
-    putStrLn "--------------------------------"
-    putStrLn "1. sendBitsek" 
-    -- putStrLn "2. showBalance"
-    -- putStrLn "3. mineBlock"
-    putStrLn "--------------------------------"    
-    putStrLn "What do you want to do?"
-    putStrLn "--------------------------------" 
-
-sendBitsek :: (Block, Blockchain) -> IO b
-sendBitsek (pb, bc) = do 
-    let pbIx = index pb
-    let pbTs = transactions pb
-    let pbPf = proof pb
-    let pbPh = previousHash pb
-
-    putStrLn "Type in sender adress: "
-    s <- getLine
-    let sender = (getUser s bc)
-
-    putStrLn "Type in sender password: "
-    pw <- getLine
-
-    putStrLn "Type in receiver adress"
-    r <- getLine
-    let receiver = (getUser r bc)
-
-    putStrLn "Type in amount to send"
-    a <- getLine
-    let amount = (read a :: Int)
-    -- TO DO: implement try & catch exception handler with Either monad
-
-    let t = (Transaction sender receiver amount)
-
-    -- TO DO: implement validTransaction with pk
-    let pb' = Block pbIx (pbTs ++ [t]) pbPf pbPh
-
-    program (pb', bc)
