@@ -103,8 +103,7 @@ mineBitsek (pb, bc) = do
 
 printTransactions :: (Block, Blockchain) -> IO b
 printTransactions (pb, bc) = do
-    let ts = allTransactions bc
-    printTransactionsAux ts
+    printTransactionsAux (allTransactions bc)
     program (pb, bc)
 
 printTransactionsAux :: [Transaction] -> IO ()
