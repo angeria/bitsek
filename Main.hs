@@ -19,6 +19,7 @@ program (pb, bc) = do
         "showBalance" -> showBalance (pb, bc)
         "mineBitsek" -> mineBitsek (pb, bc)
         "showVerifiedTransactions" -> printTransactions (pb, bc)
+        "showUsers" -> printUsers (pb, bc)
 
 menu :: IO ()
 menu = do 
@@ -29,6 +30,7 @@ menu = do
     putStrLn "2. showBalance"
     putStrLn "3. mineBitsek"
     putStrLn "4. showVerifiedTransactions"
+    putStrLn "5. showUsers"
     putStrLn "--------------------------------"    
     putStrLn "What do you want to do?"
     putStrLn "--------------------------------" 
@@ -105,9 +107,9 @@ printTransactions :: (Block, Blockchain) -> IO b
 printTransactions (pb, bc) = do
     putStrLn "--------------------------------" 
     printTransactionsAux (allTransactions bc)
+
     putStrLn "Press enter to go back to main menu."
     getChar
-
     program (pb, bc)
 
 printTransactionsAux :: [Transaction] -> IO ()
@@ -116,6 +118,22 @@ printTransactionsAux (t:ts) = do
     let s = adress (sender t)
     let r = adress (receiver t)
     let a = show (amount t)
-    let tstr = ("From: " ++ s ++ "  |  To: " ++ r ++ "  |  Amount: " ++ a)
-    putStrLn tstr
+    putStrLn ("From: " ++ s ++ "  |  To: " ++ r ++ "  |  Amount: " ++ a)
     printTransactionsAux ts
+
+printUsers :: (Block, Blockchain) -> IO b
+printUsers (pb, bc) = do 
+    putStrLn "--------------------------------" 
+    printUsersAux (allUsers bc)
+    
+    putStrLn "Press enter to go back to main menu."
+    getChar
+    program (pb, bc)
+
+printUsersAux :: [User] -> IO ()
+printUsersAux [] = putStrLn ""
+printUsersAux (u:us) = do 
+    let ad = adress u
+    let bal = show (balance u)
+    putStrLn ("Public adress: " ++ ad ++ " | Balance: " ++ bal)
+    printUsersAux us
