@@ -15,6 +15,8 @@ import Crypto.Hash
 -- Functions to convert to and from bytestrings which can be hashed.
 import Data.ByteString.Conversion
 
+import Test.HUnit
+
 ----------------
 -- DATA TYPES --
 ----------------
@@ -285,3 +287,19 @@ mineBlockAux block nonce
 -}
 hashBlock :: Block -> Int -> String
 hashBlock block nonce = show $ hashWith SHA256 $ toByteString' $ (show nonce ++ previousHash block ++ transactionsToString block)
+
+
+-----------
+-- TESTS --
+-----------
+
+test1 = TestCase (assertEqual "for (adressTaken (adress dave) [dave]," True (adressTaken (adress dave) [dave]))
+test2 = TestCase (assertEqual "for (adressTaken (adress dave) [fabbe,benne]," False (adressTaken (adress dave) [fabbe, benne]))
+test3 = TestCase (assertEqual "for (adressTaken (adress dave) [fabbe,benne]," False (adressTaken (adress dave) []))
+
+
+
+tests = TestList [TestLabel "adressTaken1" test1, 
+                  TestLabel "adressTaken2" test2, 
+                  TestLabel "adressTaken3" test3] 
+
