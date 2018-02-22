@@ -124,12 +124,12 @@ showBalance (pb, bc, us) = do
 mineBitsek :: (Block, Blockchain, [User]) -> IO b
 mineBitsek (pb, bc, us) = do
 
-    let bc' = addToBlockchain bc (newBlockIO bc pb)
+    let bc' = addToBlockchain bc (newBlock bc pb)
     let pb' = (Block 0 [] 0 "")
 
     putStrLn "--------------------------------" 
     putStrLn "Result:" 
-    print (addToBlockchain bc (newBlockIO bc pb))
+    print (addToBlockchain bc (newBlock bc pb))
     putStrLn "--------------------------------" 
     putStrLn "You have successfully mined!"
     putStrLn "The block with your transactions were inserted into the blockchain."

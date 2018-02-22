@@ -243,21 +243,9 @@ allTransactionsAux (block:blocks) = transactions block ++ allTransactionsAux blo
 -- Mining / Proof of work --
 ----------------------------
 
--- CAN MAYBE BE REMOVED? 
-{- 	newBlock blockchain transaction
-	Creates a new block with a transaction.
-	RETURNS: A new block that contains transaction, which can be added to blockchain.
--}
-newBlock :: Blockchain -> Transaction -> Block
-newBlock blockchain newTransaction = Block newIndex [newTransaction] proof previousHash
-  where
-    newIndex = 1 + (index $ lastBlock blockchain)
-    proof = snd $ mineBlock (lastBlock blockchain)
-    previousHash = fst $ mineBlock (lastBlock blockchain)
-
 -- Works with the client side.
-newBlockIO :: Blockchain -> Block -> Block
-newBlockIO blockchain block = Block newIndex newTransactions proof previousHash
+newBlock :: Blockchain -> Block -> Block
+newBlock blockchain block = Block newIndex newTransactions proof previousHash
   where
     newIndex = 1 + (index $ lastBlock blockchain)
     newTransactions = transactions block
