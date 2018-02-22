@@ -158,8 +158,7 @@ validBlockchainAux (x:xs)
    | otherwise = False
 ```
 
-
-### Control Flow
+#### Control Flow
 
 https://svgshare.com/i/5dr.svg
 
