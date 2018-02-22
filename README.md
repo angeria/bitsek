@@ -2,6 +2,17 @@
 
 A simple cryptocurrency in Haskell.
 
+- [Bitsek](#bitsek)
+  * [About](#about)
+  * [Authors](#authors)
+  * [Getting started](#getting-started)
+    + [Requirements](#requirements)
+    + [Setup](#setup)
+    + [Heads up](#heads-up)
+  * [Table of Contents](#table-of-contents)
+  * [Introduction](#introduction)
+  * [Inner workings](#inner-workings)
+
 ## About
 This is a Haskell project in the course "Program Design and Data Structures" during spring term 2018 at Uppsala University.
 
