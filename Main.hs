@@ -200,6 +200,11 @@ createUser (pb, bc, us) = do
     putStrLn "--------------------------------" 
     putStrLn "Choose an adress"
     ad <- getLine
+    
+    if adressTaken ad 
+        then do 
+            putStrLn "Adress has been taken."
+            createUser (pb, bc, us)
 
     putStrLn "Choose a password"
     pw <- getLine

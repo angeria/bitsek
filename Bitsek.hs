@@ -186,6 +186,17 @@ getUserAux ad (u:us)
     | ad == adress u = u
     | otherwise = getUserAux ad us
 
+{- adressNotTaken adress blockchain
+Returns the user with the given adress, with correct current balance
+PRE: 
+POST: User has correct balance
+-}
+adressTaken :: Adress -> [User] -> Bool 
+adressTaken ad [] = False
+adressTaken ad (u:us)
+        | ad == adress u = True
+        | otherwise = adressTaken us
+
 ---------------------------
 -- TRANSACTION FUNCTIONS --
 ---------------------------
