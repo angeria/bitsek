@@ -93,9 +93,7 @@ addToBlockchain (Blockchain blocks) newBlock = Blockchain (newBlock:blocks)
 	RETURNS: Bool saying if blockchain is valid or not.
 -}
 validBlockchain :: Blockchain -> Bool
-validBlockchain (Blockchain blocks) = validBlockchainAux reversedBlockchain 
-    where 
-        reversedBlockchain = reverse blocks
+validBlockchain (Blockchain blocks) = validBlockchainAux (reverse blocks) 
 
 {- 	validBlockchainAux blocks
 	Checks that every block in a list of blocks meets the proof of work precondition.
