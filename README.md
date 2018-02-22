@@ -16,7 +16,7 @@ A simple cryptocurrency in Haskell.
 ## About
 This is a Haskell project in the course "Program Design and Data Structures" during spring term 2018 at Uppsala University.
 
-Bitsek is a local cryptocurrency with a non-distributed ledger. It runs on blockchain and a proof-of-work mechanism based on hashing with SHA256.
+Bitsek is a local cryptocurrency with a non-distributed ledger. It runs on a blockchain and a proof-of-work mechanism based on hashing with SHA256.
 
 ## Authors 
 Benjamin Angeria, Holger Swartling and Fabian Haglund.
@@ -45,9 +45,13 @@ $ cabal install bytestring-conversion
 Run the Main executable. You should be greeted with the main menu in the terminal.
 ![main-menu](https://i.imgur.com/pnNQWa6.png)
 
-The video below shows how to use the application.
+You could now for example send some Bitsek to someone by choosing the _send_ option. Input your adress, password, the reciever's address and the amount. After you have completed the transaction, you have to choose the _mine_ option for it to be verified and added to the blockchain.
+![send-and-mine](https://i.imgur.com/qjdaE0H.png)
 
+The video below shows a typical use case.
 [![asciicast](https://asciinema.org/a/sYSh7OOmaof5QOq3Hy62CUE9I.png)](https://asciinema.org/a/sYSh7OOmaof5QOq3Hy62CUE9I)
+
+
 
 ### Heads up
 
