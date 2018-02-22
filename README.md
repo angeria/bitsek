@@ -1,7 +1,7 @@
 # Bitsek
+> A simple cryptocurrency in Haskell.
 
-A simple cryptocurrency in Haskell.
-
+## Table of Contents
 - [Bitsek](#bitsek)
   * [Introduction](#introduction)
   * [Authors](#authors)
@@ -16,23 +16,24 @@ A simple cryptocurrency in Haskell.
 ## About
 This is a Haskell project in the course "Program Design and Data Structures" during spring term 2018 at Uppsala University.
 
-## Authors 
+## Developers 
 Benjamin Angeria, Holger Swartling and Fabian Haglund.
 
 ## Introduction
 Bitsek is a local cryptocurrency with a non-distributed ledger. It runs on a blockchain and a proof-of-work mechanism based on hashing with SHA256.
 
-The program has side-effect and IO in _Main.hs_ to interact with the user. However, the core in _Bitsek.hs_ is computationally pure for more demanding calculations.
+The program has side-effects and IO in _Main.hs_ to interact with the user. However, the core in _Bitsek.hs_ is computationally pure.
 
 ## Features
 
-- Send and receive cryptocurrency to/from other users.
+- Set up a blockchain.
+- Send and receive cryptocurrency locally to/from other users.
 - Mine blocks.
 - Show verified transactions.
 - Create new users.
 - List all users.
 
-# Getting started
+## Getting started
 ### Requirements
 Make sure you have the [Haskell Platform](https://www.haskell.org/downloads#platform) installed.
 
@@ -40,7 +41,7 @@ Additionally, Bitsek uses the following packages.
 * [cryptonite](https://hackage.haskell.org/package/cryptonite)
 * [bytestring-conversion](https://hackage.haskell.org/package/bytestring-conversion)
 
-To install them, run these commands in your terminal.
+Run these commands in the terminal to install them.
 
 ```
 $ cabal install cryptonite
@@ -111,7 +112,8 @@ Lorem Ipsum
 Lorem Ipsum
 
 ### Control Flow
-Lorem Ipsum
+
+https://svgshare.com/i/5dr.svg
 
 ## Future Improvements
 Bitsek is in an early development phase and there is long way left before it's a viable cryptocurrency. In its current state it can only be started locally in a single terminal session. After closing the terminal the blockchain is gone. No network is involved and the ledger is hence non-distributed. The following features are crucial to further developing Bitsek.
