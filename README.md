@@ -105,58 +105,11 @@ The fourth and last data type used, is Blockchain. It represents a list of block
 data Blockchain = Blockchain [Block]
 ```
 
-### Functions & Algorithms
-Lorem Ipsum
+### Algorithms
+Lorem ipsum
 
-#### Mining blocks
-
-The mining of a block is essential to the inner workings of a blockchain. In order to secure and verify transactions we use a proof of work mechanism that basically makes any given node apply computational power to solve some mathematical problem. In this case finding a nonce that in combination with the input data generates a hash that satisfies a given precondition. In this case the precondition is that the hash begins with three zeroes.
-
-```haskell
-mineBlock :: Block -> (String, Int)
-mineBlock block = mineBlockAux block 0
-
-mineBlockAux :: Block -> Int -> (String, Int)
-mineBlockAux block nonce
-	| head hashResult == '0' 
-       && hashResult !! 1 == '0'
-       && hashResult !! 2 == '0'
-       = (hashResult, nonce)
-    | otherwise = mineBlockAux block (nonce + 1)
-       where
-           hashResult = hashBlock block nonce
-            
-            
-hashBlock :: Block -> Int -> String
-hashBlock block nonce = show $ hashWith SHA256 $ toByteString' $ (show nonce ++ previousHash block ++ transactionsToString block)
-```
-
-#### Encrypting passwords
-This function makes use of the widely popular SHA256 algorithm to encrypt passwords and protect users. 
-
-In detail, we convert the password of type string into a byte string, we then proceed to hash this string using the aforementioned SHA256 algorithm, finally we call show with the result in order to return the result as a regular string. 
-
-```haskell
-encryptPassword :: String -> String
-encryptPassword password = show $ hashWith SHA256 $ toByteString' password
-
-```
-
-#### Validating the blockchain
-
-Validating the blockchain
-
-```haskell
-validBlockchain :: Blockchain -> Bool
-validBlockchain (Blockchain blocks) = validBlockchainAux (reverse blocks) 
-
-validBlockchainAux :: [Block] -> Bool
-validBlockchainAux [] = True
-validBlockchainAux [x] = True
-validBlockchainAux (x:xs)
-   | hashBlock x (proof (head xs)) == (previousHash (head xs)) = validBlockchainAux xs
-   | otherwise = False
-```
+### Functions
+Lorem ipsum
 
 ### Control Flow
 
