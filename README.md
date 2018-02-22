@@ -160,7 +160,7 @@ validBlockchainAux (x:xs)
 
 #### Control Flow
 
-https://svgshare.com/i/5dr.svg
+![main-control-flow](https://i.imgur.com/xI7zkDW.png)
 
 ## Future Improvements
 Bitsek is in an early development phase and there is long way left before it's a viable cryptocurrency. In its current state it can only be started locally in a single terminal session. After closing the terminal the blockchain is gone. No network is involved and the ledger is hence non-distributed. The following features are crucial to further developing Bitsek.
