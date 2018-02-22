@@ -45,7 +45,9 @@ $ cabal install bytestring-conversion
 Run the Main executable. You should be greeted with the main menu in the terminal.
 ![main-menu](https://i.imgur.com/pnNQWa6.png)
 
+The video below shows how to use the application.
 
+[![asciicast](https://asciinema.org/a/sYSh7OOmaof5QOq3Hy62CUE9I.png)](https://asciinema.org/a/sYSh7OOmaof5QOq3Hy62CUE9I)
 
 ### Heads up
 
