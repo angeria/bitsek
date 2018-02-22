@@ -293,13 +293,16 @@ hashBlock block nonce = show $ hashWith SHA256 $ toByteString' $ (show nonce ++ 
 -- TESTS --
 -----------
 
-test1 = TestCase (assertEqual "for (adressTaken (adress dave) [dave]," True (adressTaken (adress dave) [dave]))
-test2 = TestCase (assertEqual "for (adressTaken (adress dave) [fabbe,benne]," False (adressTaken (adress dave) [fabbe, benne]))
-test3 = TestCase (assertEqual "for (adressTaken (adress dave) [fabbe,benne]," False (adressTaken (adress dave) []))
-
+test1 = TestCase (assertEqual "for adressTaken (adress dave) [dave]," True (adressTaken (adress dave) [dave]))
+test2 = TestCase (assertEqual "for adressTaken (adress dave) [fabbe,benne]," False (adressTaken (adress dave) [fabbe, benne]))
+test3 = TestCase (assertEqual "for adressTaken (adress dave) [fabbe,benne]," False (adressTaken (adress dave) []))
+test4 = TestCase (assertEqual "for encryptPassword pw," (privateKey dave) (encryptPassword "monadsforbreakfast"))
+test5 = TestCase (assertEqual "for validPassword u pw" True (validPassword dave "monadsforbreakfast"))
 
 
 tests = TestList [TestLabel "adressTaken1" test1, 
                   TestLabel "adressTaken2" test2, 
-                  TestLabel "adressTaken3" test3] 
+                  TestLabel "adressTaken3" test3,
+                  TestLabel "encryptPassword1" test4,
+                  TestLabel "validPassword1" test5] 
 
