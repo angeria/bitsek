@@ -2,13 +2,16 @@
 
 A simple cryptocurrency in Haskell.
 
-# Table of Contents
-
-# Introduction
-
-## Inner workings
-The program runs client-side commands in main.hs but uses the computationally pure Bitsek.hs for more demanding calculations.
-
+- [Bitsek](#bitsek)
+  * [About](#about)
+  * [Authors](#authors)
+  * [Getting started](#getting-started)
+    + [Requirements](#requirements)
+    + [Setup](#setup)
+    + [Heads up](#heads-up)
+  * [Table of Contents](#table-of-contents)
+  * [Introduction](#introduction)
+  * [Inner workings](#inner-workings)
 
 ## About
 This is a Haskell project in the course "Program Design and Data Structures" during spring term 2018 at Uppsala University.
@@ -16,25 +19,33 @@ This is a Haskell project in the course "Program Design and Data Structures" dur
 ## Authors 
 Benjamin Angeria, Holger Swartling and Fabian Haglund.
 
-## Installation
+## Getting started
 
 ### Requirements
-* GHC
-* cryptonite
-* bytestring-conversion
+* GHC  
+* cryptonite  
+* bytestring-conversion  
 
-```
-$ cabal install cryptonite`
-$ cabal install bytestring-conversion
-```
+`$ cabal install cryptonite`  
+`$ cabal install bytestring-conversion`  
 
 ### Setup
 
-```
-$ ghc Bitsek.hs
-$ main
-```
+`$ ghc Main.hs`  
+`$ main`  
 
+### Heads up
+
+Bitsek is still young and sensitive to peculiar input.  
+Make sure to type with clinical accuracy.
+
+## Table of Contents
+
+## Introduction
+
+## Inner workings
+
+The program runs client-side commands in Main.hs but uses the computationally pure Bitsek.hs for more demanding calculations.
 
 # This document should include:
 - A table of contents, an introduction, and summary of what the program does.
