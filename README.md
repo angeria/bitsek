@@ -20,7 +20,7 @@ This is a Haskell project in the course "Program Design and Data Structures" dur
 Benjamin Angeria, Holger Swartling and Fabian Haglund.
 
 ## Introduction
-Bitsek is a local cryptocurrency with a non-distributed ledger. It runs on a blockchain and a proof-of-work mechanism based on hashing with SHA256.
+Bitsek is a locally run cryptocurrency with a non-distributed ledger. It runs on a blockchain with a proof of work-mechanism based on hashing with SHA256.
 
 The program has side-effects and IO in _Main.hs_ to interact with the user. However, the core in _Bitsek.hs_ is computationally pure.
 
@@ -105,11 +105,58 @@ The fourth and last data type used, is Blockchain. It represents a list of block
 data Blockchain = Blockchain [Block]
 ```
 
-### Algorithms
+### Functions & Algorithms
 Lorem Ipsum
 
-### Functions
-Lorem Ipsum
+#### Mining blocks
+
+The mining of a block is essential to the inner workings of a blockchain. In order to secure and verify transactions we use a proof of work mechanism that basically makes any given node apply computational power to solve some mathematical problem. In this case finding a nonce that in combination with the input data generates a hash that satisfies a given precondition. In this case the precondition is that the hash begins with three zeroes.
+
+```haskell
+mineBlock :: Block -> (String, Int)
+mineBlock block = mineBlockAux block 0
+
+mineBlockAux :: Block -> Int -> (String, Int)
+mineBlockAux block nonce
+	| head hashResult == '0' 
+       && hashResult !! 1 == '0'
+       && hashResult !! 2 == '0'
+       = (hashResult, nonce)
+    | otherwise = mineBlockAux block (nonce + 1)
+       where
+           hashResult = hashBlock block nonce
+            
+            
+hashBlock :: Block -> Int -> String
+hashBlock block nonce = show $ hashWith SHA256 $ toByteString' $ (show nonce ++ previousHash block ++ transactionsToString block)
+```
+
+#### Encrypting passwords
+This function makes use of the widely popular SHA256 algorithm to encrypt passwords and protect users. 
+
+In detail, we convert the password of type string into a byte string, we then proceed to hash this string using the aforementioned SHA256 algorithm, finally we call show with the result in order to return the result as a regular string. 
+
+```haskell
+encryptPassword :: String -> String
+encryptPassword password = show $ hashWith SHA256 $ toByteString' password
+
+```
+
+#### Validating the blockchain
+
+Validating the blockchain
+
+```haskell
+validBlockchain :: Blockchain -> Bool
+validBlockchain (Blockchain blocks) = validBlockchainAux (reverse blocks) 
+
+validBlockchainAux :: [Block] -> Bool
+validBlockchainAux [] = True
+validBlockchainAux [x] = True
+validBlockchainAux (x:xs)
+   | hashBlock x (proof (head xs)) == (previousHash (head xs)) = validBlockchainAux xs
+   | otherwise = False
+```
 
 ### Control Flow
 
@@ -119,7 +166,7 @@ https://svgshare.com/i/5dr.svg
 Bitsek is in an early development phase and there is long way left before it's a viable cryptocurrency. In its current state it can only be started locally in a single terminal session. After closing the terminal the blockchain is gone. No network is involved and the ledger is hence non-distributed. The following features are crucial to further developing Bitsek.
 
 ### User Interface
-The user interface of Bitsek is still young and sensitive to peculiar input. It's important to type with clinical accuracy or else the program might crash. Future work will be done to improve the graphical interface and make it better on input and exception handling.
+The user interface of Bitsek is still young and sensitive to peculiar input. It's important to type with clinical accuracy or else the program might crash. Future work will be done to improve the graphical interface as well as implement input and exception handling.
 
 ### Write to file
 As mentioned, a shortcoming of the program is that the blockchain and the transactions it holds doesn't get saved when the terminal is closed. This could be solved by writing everything to a file instead of just keeping it in the memory. This shouldn't be too hard to implement.
