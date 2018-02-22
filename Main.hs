@@ -201,23 +201,23 @@ createUser (pb, bc, us) = do
     putStrLn "Choose an adress"
     ad <- getLine
     
-    if adressTaken ad 
+    if (adressTaken ad us)
         then do 
             putStrLn "Adress has been taken."
             createUser (pb, bc, us)
-
-    putStrLn "Choose a password"
-    pw <- getLine
-    let pk = encryptPassword pw
-
-    let u = (User ad pk 1000)
-    putStrLn ""
-    putStrLn ("Welcome to the world of Bitsek, " ++ ad ++ "!")
-    putStrLn "Your starting balance is 1000 Bitsek"
-    putStrLn ""
-
-    let us' = u:us
-
-    putStrLn "Press enter to go back to main menu."
-    getChar
-    program (pb, bc, us')
+        else do
+            putStrLn "Choose a password"
+            pw <- getLine
+            let pk = encryptPassword pw
+        
+            let u = (User ad pk 1000)
+            putStrLn ""
+            putStrLn ("Welcome to the world of Bitsek, " ++ ad ++ "!")
+            putStrLn "Your starting balance is 1000 Bitsek"
+            putStrLn ""
+        
+            let us' = u:us
+        
+            putStrLn "Press enter to go back to main menu."
+            getChar
+            program (pb, bc, us')
