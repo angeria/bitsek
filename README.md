@@ -16,23 +16,36 @@ A simple cryptocurrency in Haskell.
 ## About
 This is a Haskell project in the course "Program Design and Data Structures" during spring term 2018 at Uppsala University.
 
+Bitsek is a local cryptocurrency with a non-distributed ledger. It runs on blockchain and a proof-of-work mechanism based on hashing with SHA256.
+
 ## Authors 
 Benjamin Angeria, Holger Swartling and Fabian Haglund.
 
-## Getting started
+## Features
 
+- Send and receive cryptocurrency to/from other users.
+- Mine blocks.
+- Show verified transactions.
+- Create new users.
+- List all users.
+
+# Getting started
 ### Requirements
-* GHC  
-* cryptonite  
-* bytestring-conversion  
+* GHC
+* cryptonite
+* bytestring-conversion
 
-`$ cabal install cryptonite`  
-`$ cabal install bytestring-conversion`  
+```
+$ cabal install cryptonite
+$ cabal install bytestring-conversion
+```
 
-### Setup
+### Usage
 
-`$ ghc Main.hs`  
-`$ main`  
+Run the Main executable. You should be greeted with the main menu in the terminal.
+![main-menu](https://i.imgur.com/pnNQWa6.png)
+
+
 
 ### Heads up
 
