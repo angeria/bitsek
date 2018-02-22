@@ -31,9 +31,13 @@ Benjamin Angeria, Holger Swartling and Fabian Haglund.
 
 # Getting started
 ### Requirements
-* GHC
+Make sure you have the Haskell Platform installed.
+
+Additionally, Bitsek uses the following packages.
 * cryptonite
 * bytestring-conversion
+
+To install them, run the these commands in your terminal.
 
 ```
 $ cabal install cryptonite
@@ -52,28 +56,15 @@ You could now for example send some Bitsek to someone by choosing the _send_ opt
 ![send-and-mine](https://i.imgur.com/qjdaE0H.png)
 
 The video below shows a typical use case.
+
 [![asciicast](https://asciinema.org/a/sYSh7OOmaof5QOq3Hy62CUE9I.png)](https://asciinema.org/a/sYSh7OOmaof5QOq3Hy62CUE9I)
 
 
 
-### Heads up
-
+### Heads Up
 Bitsek is still young and sensitive to peculiar input.  
 Make sure to type with clinical accuracy.
-
-## Table of Contents
-
-## Introduction
 
 ## Inner workings
 
 The program runs client-side commands in Main.hs but uses the computationally pure Bitsek.hs for more demanding calculations.
-
-# This document should include:
-- A table of contents, an introduction, and summary of what the program does.
-- Use cases: a guide for how to actually use your program, including key examples.
-- Program documentation: a description of how your program really works, including at least:
-- Description of data structures. For abstract data types, you should also describe the interface.
-- Description of the algorithms your program uses.
-- Description of the various functions of the program. Describe algorithms and provide functional specifications for the main elements. Describe the control flow (i.e., how functions call each other).
-- Description of known shortcomings of the program. There may be things that work but not as well as you would like, or things that despite valiant attempts you have not succeeded in implementing properly.
