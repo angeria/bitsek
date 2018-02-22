@@ -98,6 +98,12 @@ data Block = Block { index :: Int
 
 Compared to User and Transaction, the Block data type is a bit more complex - but nothing to be scared about. It consists of _Index_, _Transactions_, _Proof_, and _PreviousHash_. Every block has an index, and the first block in the blockchain (a.k.a. the _Genesis Block_) has index 0. The blocks after it has 1, 2, 3 and so on. This is to keep track of the order they were created. Each block also has a list of transactions. The list can be empty or it can contain an arbitrary number of transactions. It contains all the transaction that were made since the block before it in the blockchain was mined. Talking about mining brings us to the next component of a block - the _proof_. The proof is the nonce (an arbitrary int), that when hashed together with the previous block gives a string that matches a predefined condition. Lastly, the _PreviousHash_ is simply the hash of the block before it in the blockchain.
 
+The fourth and last data type used, is Blockchain. It represents a list of blocks where the head of the list is the latest mined block. 
+
+```haskell
+data Blockchain = Blockchain [Block]
+```
+
 ### Algorithms
 Lorem Ipsum
 
@@ -108,9 +114,16 @@ Lorem Ipsum
 Lorem Ipsum
 
 ## Future Improvements
-Lorem Ipsum
+Bitsek is in an early development phase and there is long way left before it's a viable cryptocurrency. In its current state it can only be started locally in a single terminal session. After closing the terminal the blockchain is gone. No network is involved and the ledger is hence non-distributed. The following features are crucial to further developing Bitsek.
 
+### User Interface
+The user interface of Bitsek is still young and sensitive to peculiar input. It's important to type with clinical accuracy or else the program might crash. Future work will be done to improve the graphical interface and make it better on input and exception handling.
 
-### Heads Up
-Bitsek is still young and sensitive to peculiar input.  
-Make sure to type with clinical accuracy.
+### Write to file
+As mentioned, a shortcoming of the program is that the blockchain and the transactions it holds doesn't get saved when the terminal is closed. This could be solved by writing everything to a file instead of just keeping it in the memory. This shouldn't be too hard to implement.
+
+### Network and Consensus
+Another more challenging feature is to implement network and blockchain consensus. This would mean that several nodes in a  network could make transactions and mine simultaneously. The consensus mechanism works simply by choosing the longest blockchain with a valid proof-of-work. The blockchain technology hence rely on that the major part of the miners have good intentions to outwork potenial malevolent miners with hash power.
+
+### Mining Reward
+To amass constructive hash power from nodes, there has to be an incentive for mining. A solution is to give some of the currency as a reward to the node that successfully mines a block. At the same time this reward mechanism acts as the influx of currency into circulation.
