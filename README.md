@@ -42,8 +42,11 @@ $ cabal install bytestring-conversion
 
 ### Usage
 
-Run the Main executable. You should be greeted with the main menu in the terminal.
+Start off by running the _Main_ executable. You should be greeted with the main menu in the terminal.
 ![main-menu](https://i.imgur.com/pnNQWa6.png)
+
+A natural first step as a new user would be to create a new user. Do this by writing _new_ and press enter. Here we are creating an account for Mr. Satoshi Nakamoto. He is immediately gifted with 1000 Bitsek.
+![new-user](https://i.imgur.com/taYfsBF.png)
 
 You could now for example send some Bitsek to someone by choosing the _send_ option. Input your adress, password, the reciever's address and the amount. After you have completed the transaction, you have to choose the _mine_ option for it to be verified and added to the blockchain.
 ![send-and-mine](https://i.imgur.com/qjdaE0H.png)
