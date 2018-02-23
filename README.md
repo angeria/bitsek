@@ -63,6 +63,19 @@ The video below shows a typical use case.
 
 [![asciicast](https://asciinema.org/a/sYSh7OOmaof5QOq3Hy62CUE9I.png)](https://asciinema.org/a/sYSh7OOmaof5QOq3Hy62CUE9I)
 
+___
+
+### Testing
+
+If you want to run unit tests, load _Tests.hs_ in your terminal by typing in the following.
+
+```
+$ ghci Tests
+$ runTests
+```
+
+![run-tests](https://i.imgur.com/qkH1uT4.png)
+
 ## Program Documentation
 
 ### Data Structures
