@@ -96,6 +96,43 @@ validBlockchainAux (x:xs)
 lastBlock :: Blockchain -> Block
 lastBlock blockchain = case blockchain of Blockchain (x:xs) -> x
 
+----------------------------
+-- Mining / Proof of work --
+----------------------------
+
+-- Works with the client side.
+newBlock :: Blockchain -> Block -> Block
+newBlock blockchain block = Block newIndex newTransactions proof previousHash
+  where
+    newIndex = 1 + (index $ lastBlock blockchain)
+    newTransactions = transactions block
+    proof = snd $ mineBlock (lastBlock blockchain)
+    previousHash = fst $ mineBlock (lastBlock blockchain)
+
+{-  mineBlock block
+    Runs a proof of work mechanism on block.
+    RETURNS: Hash of block beginning with three 0's and a proof.
+-}
+mineBlock :: Block -> (String, Int)
+mineBlock block = mineBlockAux block 0
+
+mineBlockAux :: Block -> Int -> (String, Int)
+mineBlockAux block nonce
+    | head hashResult == '0' 
+        && hashResult !! 1 == '0'
+        && hashResult !! 2 == '0'
+        = (hashResult, nonce)
+    | otherwise = mineBlockAux block (nonce + 1)
+        where
+            hashResult = hashBlock block nonce
+
+{-  hashBlock block nonce
+    Takes a block and a nonce and hashes it with SHA256.
+    RETURNS: Hash of nonce (arbitrary number) and the information in block.
+-}
+hashBlock :: Block -> Int -> String
+hashBlock block nonce = show $ hashWith SHA256 $ toByteString' $ (show nonce ++ previousHash block ++ transactionsToString block)
+
 --------------------
 -- USER FUNCTIONS --
 --------------------
@@ -217,41 +254,3 @@ allTransactions (Blockchain blocks) = allTransactionsAux blocks
 allTransactionsAux :: [Block] -> [Transaction]
 allTransactionsAux [] = []
 allTransactionsAux (block:blocks) = transactions block ++ allTransactionsAux blocks
-
-----------------------------
--- Mining / Proof of work --
-----------------------------
-
--- Works with the client side.
-newBlock :: Blockchain -> Block -> Block
-newBlock blockchain block = Block newIndex newTransactions proof previousHash
-  where
-    newIndex = 1 + (index $ lastBlock blockchain)
-    newTransactions = transactions block
-    proof = snd $ mineBlock (lastBlock blockchain)
-    previousHash = fst $ mineBlock (lastBlock blockchain)
-
-{-  mineBlock block
-    Runs a proof of work mechanism on block.
-    RETURNS: Hash of block beginning with three 0's and a proof.
--}
-mineBlock :: Block -> (String, Int)
-mineBlock block = mineBlockAux block 0
-
-mineBlockAux :: Block -> Int -> (String, Int)
-mineBlockAux block nonce
-    | head hashResult == '0' 
-        && hashResult !! 1 == '0'
-        && hashResult !! 2 == '0'
-        = (hashResult, nonce)
-    | otherwise = mineBlockAux block (nonce + 1)
-        where
-            hashResult = hashBlock block nonce
-
-{-  hashBlock block nonce
-    Takes a block and a nonce and hashes it with SHA256.
-    RETURNS: Hash of nonce (arbitrary number) and the information in block.
--}
-hashBlock :: Block -> Int -> String
-hashBlock block nonce = show $ hashWith SHA256 $ toByteString' $ (show nonce ++ previousHash block ++ transactionsToString block)
-
