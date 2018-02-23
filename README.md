@@ -106,7 +106,6 @@ data Blockchain = Blockchain [Block]
 ```
 
 ### Functions & Algorithms
-The _validBlockchain_ function recurringly checks the blockchain for tampering. The proof of work concept makes this very easy to do. New blocks are hashed with a random nonce to create a hash that conforms to our specifications. The nonce for a particular block is saved in the next block as the _proof_ as well as the _hash_ for that block with that nonce. When looking back, instead of hashing through all ints till the proof is reached we can now have it hash the block with the nonce already provided. If the new hash is the same as the _previousHash_ this particular link of the chain is valid. If any link would be invalid, the chain past that point is invalid as well.
 
 #### Mining blocks
 
@@ -144,7 +143,7 @@ encryptPassword password = show $ hashWith SHA256 $ toByteString' password
 
 #### Validating the blockchain
 
-Validating the blockchain
+The _validBlockchain_ function recurringly checks the blockchain for tampering. The proof of work concept makes this very easy to do. New blocks are hashed with a random nonce to create a hash that conforms to our specifications. The nonce for a particular block is saved in the next block as the _proof_ as well as the _hash_ for that block with that nonce. When looking back, instead of hashing through all ints till the proof is reached we can now have it hash the block with the nonce already provided. If the new hash is the same as the _previousHash_ this particular link of the chain is valid. If any link would be invalid, the chain past that point is invalid as well.
 
 ```haskell
 validBlockchain :: Blockchain -> Bool
