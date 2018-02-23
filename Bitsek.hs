@@ -15,8 +15,6 @@ import Crypto.Hash
 -- Functions to convert to and from bytestrings which can be hashed.
 import Data.ByteString.Conversion
 
-import Test.HUnit
-
 ----------------
 -- DATA TYPES --
 ----------------

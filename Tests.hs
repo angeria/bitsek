@@ -42,7 +42,6 @@ emptyBlockchain = Blockchain []
 -- UNIT TESTS --
 ----------------
 
--- hashBlock
 hashBlock1 = TestCase (assertEqual "for hashBlock genesisBlock 0" "921607be76a1d3afb408c5b68e728059348c78c3fa09e43ff50388f6f5d50132" (hashBlock genesisBlock 0))
 hashBlock2 = TestCase (assertEqual "for hashBlock genesisBlock (-1)" "bf83e4dcf59d0d36c4be023010925327db90e1ce7df6484b51ec498fa0e05a16" (hashBlock genesisBlock (-1)))
 hashBlock3 = TestCase (assertEqual "for hashBlock testBlock1 (9128391812323123322)" "ed6349412e46a496d6eca1965f965fce0397185c43d087ac6d106edfb28056cf" (hashBlock testBlock1 (9128391812323123322)))
@@ -59,18 +58,14 @@ mineBlock2 = TestCase (assertEqual "for mineBlock emptyBlock" ("000f21ac06aceb9c
 newBlock1 = TestCase (assertEqual "for newBlock testBlockchain emptyBlock" 
     (Block {index = 3, transactions = [], proof = 40, previousHash = "0001cf7768b60c789adc490df7994d34fcb7876e73442d73438dc72309603580"}) (newBlock testBlockchain emptyBlock))
 
--- adressTaken
 adressTaken1 = TestCase (assertEqual "for adressTaken (adress dave) [dave]," True (adressTaken (adress dave) [dave]))
 adressTaken2 = TestCase (assertEqual "for adressTaken (adress dave) [fabbe,benne]," False (adressTaken (adress dave) [fabbe, benne]))
 adressTaken3 = TestCase (assertEqual "for adressTaken (adress dave) [fabbe,benne]," False (adressTaken (adress dave) []))
 
--- encryptPassword
 encryptPassword1 = TestCase (assertEqual "for encryptPassword pw," (privateKey dave) (encryptPassword "monadsforbreakfast"))
 
--- validPassword
 validPassword1 = TestCase (assertEqual "for validPassword u pw" True (validPassword dave "monadsforbreakfast"))
 
--- aggUser
 testTransactions = [(Transaction dave fabbe 42), (Transaction dave hogge 42)]
 aggUser1 = TestCase (assertEqual "for aggUser u ts" (balance (User "dave" "4c7be2f6d37d20fe95050f329b58bcb3b552c3544260b14319964314b38ad416" 916)) 
                                         (balance (aggUser dave testTransactions)))
