@@ -56,26 +56,6 @@ data Block = Block { index :: Int
 -}
 data Blockchain = Blockchain [Block] deriving (Show)
 
------------------------
--- TESTING VARIABLES --
------------------------
-
--- password: singularity
-fabbe = User "fabbe" "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da" 1000
--- password: entropy
-benne = User "benne" "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992" 1000
--- password: anka 
-hogge = User "hogge" "01d9db6e08b2426c3c56122aca300c143a60157de6899d6bc84614c40d86bb66" 1000
--- password: monadsforbreakfast
-dave = User "dave" "4c7be2f6d37d20fe95050f329b58bcb3b552c3544260b14319964314b38ad416" 1000
-
-genesisBlock = Block {index = 0, transactions = [], proof = 0, previousHash = (show $ hashWith SHA256 $ toByteString' "plants are institutions")}
-genesisBlockchain = Blockchain [genesisBlock]
-
-testBlock1 = Block {index = 1, transactions = [Transaction {sender = User {adress = "Benne", privateKey = "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992", balance = 100}, receiver = User {adress = "Fabbe", privateKey = "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da", balance = 100}, amount = 100}], proof = 911, previousHash = "000854f0985938bb5d557eadef1bbc8f1d0ab9bf46d58cecfdb774c87f2094c2"}
-testBlock2 = Block {index = 2, transactions = [Transaction {sender = User {adress = "Fabbe", privateKey = "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da", balance = 100}, receiver = User {adress = "Benne", privateKey = "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992", balance = 100}, amount = 20}], proof = 2719, previousHash = "00035fee66451dbc750d037bec5c5cb6e7f5e17c6a721e34db2de8be92d9dd1a"}
-testBlockchain = Blockchain [testBlock2, testBlock1, genesisBlock]
-
 --------------------------
 -- BLOCKCHAIN FUNCTIONS --
 --------------------------
@@ -108,6 +88,7 @@ validBlockchainAux (x:xs)
    | otherwise = False
 
 {-  lastBlock blockchain 
+
     Takes a blockchain and returns the last block in it.
     PRE: blockchain must be non-empty.
     RETURNS: last block in blockchain.
