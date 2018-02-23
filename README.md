@@ -50,7 +50,7 @@ $ cabal install bytestring-conversion
 
 ### Usage
 
-Start off by running the _Main_ executable. You should be greeted with the main menu in the terminal.
+Start off by running the _Main_ executable in the _app_ folder. You should be greeted with the main menu in the terminal.
 ![main-menu](https://i.imgur.com/pnNQWa6.png)
 
 A natural first step as a new user would be to create a new user. Do this by writing _new_ and press enter. Here we are creating an account for Mr. Satoshi Nakamoto. He is immediately gifted with 1000 Bitsek.
