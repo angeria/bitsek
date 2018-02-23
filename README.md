@@ -106,7 +106,7 @@ data Blockchain = Blockchain [Block]
 ```
 
 ### Functions & Algorithms
-Lorem Ipsum
+The _validBlockchain_ function recurringly checks the blockchain for tampering. The proof of work concept makes this very easy to do. New blocks are hashed with a random nonce to create a hash that conforms to our specifications. The nonce for a particular block is saved in the next block as the _proof_ as well as the _hash_ for that block with that nonce. When looking back, instead of hashing through all ints till the proof is reached we can now have it hash the block with the nonce already provided. If the new hash is the same as the _previousHash_ this particular link of the chain is valid. If any link would be invalid, the chain past that point is invalid as well.
 
 #### Mining blocks
 
@@ -156,6 +156,39 @@ validBlockchainAux [x] = True
 validBlockchainAux (x:xs)
    | hashBlock x (proof (head xs)) == (previousHash (head xs)) = validBlockchainAux xs
    | otherwise = False
+```
+
+#### Main, Program and State
+
+State is a question of necessity. In order for user interactions to be useful over time we need to store the state of pending transactions (those transactions who are waiting to be mined and verified), the blockchain itself and a list users.
+
+We decided to go with the straight forward approach of passing around state in our main program loop and mutate it as we go. 
+
+First we set up initial values for an empty pending block, a blockchain with only the genesis block and a list containing only root users. The main function then preceeds to call program with these three values as arguments.
+
+```haskell
+main :: IO b
+main = do 
+    let initPendingBlock = (Block 0 [] 0 "")
+    let initBlockchain = (Blockchain [genesisBlock])
+    let initUsers = [fabbe, benne, hogge, dave]
+    program (initPendingBlock, initBlockchain, initUsers)
+```
+
+Program then handles the interactive I/O loop so to speak. It simply prints out a menu of options and asks the user for some action. It then delegates the action to the correct subfunction and the program continues from there. Without getting into details of all subfunctions, it is useful to know that these subfunctions always end by again calling program, possibly (usually) with modified state values as new arguments.
+
+```haskell
+program :: (Block, Blockchain, [User]) -> IO b
+program (pb, bc, us) = do 
+    menu
+    action <- getLine
+    case action of 
+        "send" -> sendBitsek (pb, bc, us)
+        "balance" -> showBalance (pb, bc, us)
+        "mine" -> mineBitsek (pb, bc, us)
+        "show" -> printTransactions (pb, bc, us)
+        "new" -> createUser (pb, bc, us)
+        "list" -> printUsers (pb, bc, us)
 ```
 
 #### Control Flow
