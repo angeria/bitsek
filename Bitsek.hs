@@ -98,7 +98,11 @@ lastBlock blockchain = case blockchain of Blockchain (x:xs) -> x
 -- Mining / Proof of work --
 ----------------------------
 
--- Works with the client side.
+{-  newBlock blockchain block
+    Generates a new block which can be added to a blockchain.
+    PRE: blockchain must be non-empty.
+    RETURNS: A new block based on information in input blockchain and block.
+-}
 newBlock :: Blockchain -> Block -> Block
 newBlock blockchain block = Block newIndex newTransactions proof previousHash
   where

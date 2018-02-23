@@ -30,6 +30,7 @@ genesisBlockchain = Blockchain [genesisBlock]
 
 testTx1 = Transaction benne fabbe 100
 testTx2 = Transaction benne hogge 50
+testTransactions = [(Transaction dave fabbe 42), (Transaction dave hogge 42)]
 
 emptyBlock = Block {index = 0, transactions = [], proof = 0, previousHash = ""}
 testBlock1 = Block {index = 1, transactions = [Transaction {sender = User {adress = "Benne", privateKey = "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992", balance = 100}, receiver = User {adress = "Fabbe", privateKey = "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da", balance = 100}, amount = 100}], proof = 911, previousHash = "000854f0985938bb5d557eadef1bbc8f1d0ab9bf46d58cecfdb774c87f2094c2"}
@@ -45,7 +46,7 @@ emptyBlockchain = Blockchain []
 hashBlock1 = TestCase (assertEqual "for hashBlock genesisBlock 0" "921607be76a1d3afb408c5b68e728059348c78c3fa09e43ff50388f6f5d50132" (hashBlock genesisBlock 0))
 hashBlock2 = TestCase (assertEqual "for hashBlock genesisBlock (-1)" "bf83e4dcf59d0d36c4be023010925327db90e1ce7df6484b51ec498fa0e05a16" (hashBlock genesisBlock (-1)))
 hashBlock3 = TestCase (assertEqual "for hashBlock testBlock1 (9128391812323123322)" "ed6349412e46a496d6eca1965f965fce0397185c43d087ac6d106edfb28056cf" (hashBlock testBlock1 (9128391812323123322)))
--- TODO: Tests for numbers outside Int range.
+-- TODO: Tests for numbers outside Int range after issue #5 is fixed.
 
 validBlockchain1 = TestCase (assertEqual "for validBlockchain testBlockchain" True (validBlockchain testBlockchain))
 validBlockchain2 = TestCase (assertEqual "for validBlockchain genesisBlockchain" True (validBlockchain genesisBlockchain))
@@ -57,6 +58,10 @@ mineBlock2 = TestCase (assertEqual "for mineBlock emptyBlock" ("000f21ac06aceb9c
 
 newBlock1 = TestCase (assertEqual "for newBlock testBlockchain emptyBlock" 
     (Block {index = 3, transactions = [], proof = 40, previousHash = "0001cf7768b60c789adc490df7994d34fcb7876e73442d73438dc72309603580"}) (newBlock testBlockchain emptyBlock))
+newBlock2 = TestCase (assertEqual "for newBlock testBlockchain testBlock1" 
+    (Block {index = 3, transactions = [Transaction {sender = User {adress = "Benne", privateKey = "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992", balance = 100}, receiver = User {adress = "Fabbe", privateKey = "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da", balance = 100}, amount = 100}], proof = 40, previousHash = "0001cf7768b60c789adc490df7994d34fcb7876e73442d73438dc72309603580"})
+        (newBlock testBlockchain testBlock1))
+-- TODO: Test for newBlock with empty blockchain after issue #6 is fixed.
 
 adressTaken1 = TestCase (assertEqual "for adressTaken (adress dave) [dave]," True (adressTaken (adress dave) [dave]))
 adressTaken2 = TestCase (assertEqual "for adressTaken (adress dave) [fabbe,benne]," False (adressTaken (adress dave) [fabbe, benne]))
@@ -66,9 +71,11 @@ encryptPassword1 = TestCase (assertEqual "for encryptPassword pw," (privateKey d
 
 validPassword1 = TestCase (assertEqual "for validPassword u pw" True (validPassword dave "monadsforbreakfast"))
 
-testTransactions = [(Transaction dave fabbe 42), (Transaction dave hogge 42)]
 aggUser1 = TestCase (assertEqual "for aggUser u ts" (balance (User "dave" "4c7be2f6d37d20fe95050f329b58bcb3b552c3544260b14319964314b38ad416" 916)) 
                                         (balance (aggUser dave testTransactions)))
+
+transactionsToString1 = TestCase (assertEqual "for transactionsToString testBlock1" "Benne100Fabbe100100" (transactionsToString testBlock1))
+transactionsToString2 = TestCase (assertEqual "for transactionsToString emptyBlock" "" (transactionsToString emptyBlock))
 
 runTests = runTestTT $ TestList [TestLabel "hashBlock1" hashBlock1,
                                  TestLabel "hashBlock2" hashBlock2,
@@ -80,10 +87,14 @@ runTests = runTestTT $ TestList [TestLabel "hashBlock1" hashBlock1,
                                  TestLabel "mineBlock1" mineBlock1,
                                  TestLabel "mineBlock2" mineBlock2,
                                  TestLabel "newBlock1" newBlock1,
+                                 TestLabel "newBlock2" newBlock2,
                                  TestLabel "adressTaken1" adressTaken1, 
                                  TestLabel "adressTaken2" adressTaken2, 
                                  TestLabel "adressTaken3" adressTaken3,
                                  TestLabel "encryptPassword1" encryptPassword1,
                                  TestLabel "validPassword1" validPassword1,
-                                 TestLabel "aggUser1" aggUser1]
+                                 TestLabel "aggUser1" aggUser1,
+                                 TestLabel "transactionsToString1" transactionsToString1,
+                                 TestLabel "transactionsToString2" transactionsToString2]
+
                                  
