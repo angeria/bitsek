@@ -3,6 +3,15 @@ import Bitsek
 import Data.ByteString.Conversion
 import Crypto.Hash
 
+instance Eq User where
+    User a1 pk1 b1 == User a2 pk2 b2 = a1 == a2 && pk1 == pk2 && b1 == b2
+
+instance Eq Transaction where  
+    Transaction s1 r1 a1 == Transaction s2 r2 a2 = s1 == s2 && r1 == r2 && a1 == a2
+
+instance Eq Block where
+    Block i1 t1 p1 ph1 == Block i2 t2 p2 ph2 = i1 == i2 && t1 == t2 && p1 == p2 && ph1 == ph2
+
 -----------------------
 -- TESTING VARIABLES --
 -----------------------
@@ -18,6 +27,9 @@ dave = User "dave" "4c7be2f6d37d20fe95050f329b58bcb3b552c3544260b14319964314b38a
 
 genesisBlock = Block {index = 0, transactions = [], proof = 0, previousHash = (show $ hashWith SHA256 $ toByteString' "plants are institutions")}
 genesisBlockchain = Blockchain [genesisBlock]
+
+testTx1 = Transaction benne fabbe 100
+testTx2 = Transaction benne hogge 50
 
 emptyBlock = Block {index = 0, transactions = [], proof = 0, previousHash = ""}
 testBlock1 = Block {index = 1, transactions = [Transaction {sender = User {adress = "Benne", privateKey = "67671a2f53dd910a8b35840edb6a0a1e751ae5532178ca7f025b823eee317992", balance = 100}, receiver = User {adress = "Fabbe", privateKey = "61933d3774170c68e3ae3ab49f20ca22db83a6a202410ffa6475b25ab44bb4da", balance = 100}, amount = 100}], proof = 911, previousHash = "000854f0985938bb5d557eadef1bbc8f1d0ab9bf46d58cecfdb774c87f2094c2"}
@@ -44,7 +56,8 @@ validBlockchain4 = TestCase (assertEqual "for validBlockchain emptyBlockchain" T
 mineBlock1 = TestCase (assertEqual "for mineBlock testBlock1" ("00035fee66451dbc750d037bec5c5cb6e7f5e17c6a721e34db2de8be92d9dd1a",2719) (mineBlock testBlock1))
 mineBlock2 = TestCase (assertEqual "for mineBlock emptyBlock" ("000f21ac06aceb9cdd0575e82d0d85fc39bed0a7a1d71970ba1641666a44f530",886) (mineBlock emptyBlock))
 
--- newBlock1 = TestCase (assertEqual "for newBlock ")
+newBlock1 = TestCase (assertEqual "for newBlock testBlockchain emptyBlock" 
+    (Block {index = 3, transactions = [], proof = 40, previousHash = "0001cf7768b60c789adc490df7994d34fcb7876e73442d73438dc72309603580"}) (newBlock testBlockchain emptyBlock))
 
 -- adressTaken
 adressTaken1 = TestCase (assertEqual "for adressTaken (adress dave) [dave]," True (adressTaken (adress dave) [dave]))
@@ -71,6 +84,7 @@ runTests = runTestTT $ TestList [TestLabel "hashBlock1" hashBlock1,
                                  TestLabel "validBlockchain4" validBlockchain4,
                                  TestLabel "mineBlock1" mineBlock1,
                                  TestLabel "mineBlock2" mineBlock2,
+                                 TestLabel "newBlock1" newBlock1,
                                  TestLabel "adressTaken1" adressTaken1, 
                                  TestLabel "adressTaken2" adressTaken2, 
                                  TestLabel "adressTaken3" adressTaken3,
