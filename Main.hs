@@ -1,4 +1,5 @@
 import Bitsek
+import Tests
 
 --------------
 ---- APP -----

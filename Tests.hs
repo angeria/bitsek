@@ -1,3 +1,5 @@
+module Tests where
+
 import Test.HUnit
 import Bitsek
 import Data.ByteString.Conversion
