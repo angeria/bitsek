@@ -74,21 +74,17 @@ sendBitsek (pb, bc, us) = do
     let pbPf = proof pb
     let pbPh = previousHash pb
 
-    putStrLn "Type in sender adress: "
-    s <- getLine
+    s <- safeGetLine "Type in sender adress: "
     let sender = (getUser s us bc)
     -- What if user not found? how to handle?
 
-    putStrLn "Type in sender password: "
-    pw <- getLine
+    pw <- safeGetLine "Type in sender password: "
 
-    putStrLn "Type in receiver adress"
-    r <- getLine
+    r <- safeGetLine "Type in receiver adress"
     let receiver = (getUser r us bc)
     -- What if user not found? how to handle?
-
-    putStrLn "Type in amount to send"
-    a <- getLine
+    
+    a <- safeGetLine "Type in amount to send: "
     let amount = (read a :: Int)
     -- TO DO: implement try & catch exception handler with Either monad
 
@@ -203,16 +199,14 @@ printUsersAux (u:us) = do
 createUser :: (Block, Blockchain, [User]) -> IO b    
 createUser (pb, bc, us) = do
     putStrLn "--------------------------------" 
-    putStrLn "Choose an adress"
-    ad <- getLine
+    ad <- safeGetLine "Choose an adress"
     
     if (adressTaken ad us)
         then do 
             putStrLn "Adress has been taken."
             createUser (pb, bc, us)
         else do
-            putStrLn "Choose a password"
-            pw <- getLine
+            pw <- safeGetLine "Choose a password"
             let pk = encryptPassword pw
         
             let u = (User ad pk 1000)
@@ -232,9 +226,14 @@ safeGetLine :: String -> IO String
 safeGetLine msg = do
     putStrLn msg
     input <- getLine 
+    putStrLn ""
     putStrLn ("Input: " ++ input ++ " - Are you happy with your input? y/n")
+    putStrLn ""
     answer <- getLine
+    putStrLn ""
     case answer of 
         "y" -> return input
         "n" -> safeGetLine "Ok, try again."
     
+
+
