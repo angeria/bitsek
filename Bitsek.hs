@@ -174,19 +174,42 @@ validPassword (User _ privateKey _) password
 userBalance :: User -> Blockchain -> Int
 userBalance user blockchain = balance (aggUser user (allTransactions blockchain))    
 
+{-  aggUsers users blockchain
+    Updates the balance of all users in a list based on a given blockchain, see aggUsersAux
+    RETURNS: A list of users with updated balance values
+    EXAMPLE: aggUsers [(User "u1" _ 100), (User "u2" _ 100)] (Blockchain [(Block _ [(Transaction u1 u2 50)])] _ _)
+                     = [(User "u1" _ 50), (User "u2" _ 150)]
+-}
 aggUsers :: [User] -> Blockchain -> [User]
 aggUsers us b = aggUsersAux us (allTransactions b)
 
+{-  aggUsersAux users transactions
+    Computes the account balance for a list of users by recursively going through a list of transactions.
+    RETURNS: A list of users with updated balance values
+    EXAMPLE: aggUser [(User "u1" _ 100), (User "u2" _ 100)] [(Transaction u1 u2 50)]
+                     = [(User "u1" _ 50), (User "u2" _ 150)]
+-}
 aggUsersAux :: [User] -> [Transaction] -> [User]
+-- VARIANT: length users
 aggUsersAux [] _ = []
 aggUsersAux (u:us) ts = aggUser u ts : aggUsersAux us ts
 
+{-  aggUser user transactions
+    Computes the account balance for a user by recursively going through a list of transactions.
+    RETURNS: u with updated balance with respect to ts
+    EXAMPLE: aggUser (User "u1" _ 100) [(Transaction u1 u2 50)]
+             = [(User "u1" _ 50), (User "u2" _ 150)]
+-}
 aggUser :: User -> [Transaction] -> User
+-- VARIANT: length transactions
 aggUser u [] = u
 aggUser u (t:ts) = aggUser (updateUser u t) ts
 
 {-  updateUser user transaction
-    RETURNS:
+    Updates user balance for a given transaction.
+    RETURNS: u with updated balance with respect to t
+    EXAMPLE: aggUser (User "u1" _ 100) [(Transaction u1 u2 50)])]
+             = [(User "u1" _ 50), (User "u2" _ 150)]
 -}
 updateUser :: User -> Transaction -> User 
 updateUser (User ad pkey balance) (Transaction sender receiver amount)
@@ -195,23 +218,29 @@ updateUser (User ad pkey balance) (Transaction sender receiver amount)
     | otherwise = (User ad pkey balance)
 
 {-  getUser adress blockchain
+    Fetches a user from a blockchain for a given adress, see getUserAux
     RETURNS: user with the given adress, with correct current balance.
 -}
 getUser :: String -> [User] -> Blockchain -> User 
 getUser ad us b = getUserAux ad (aggUsers us b)
 
+{-  getUserAux adress users
+    Fetches a user from a list of users by recursively checking each user adress.
+    RETURNS: user with the given adress, with correct current balance.
+-}
 getUserAux :: String -> [User] -> User
+-- VARIANT: length users
 getUserAux ad [] = (User "User" "Not Found" 0)
 getUserAux ad (u:us) 
     | ad == adress u = u
     | otherwise = getUserAux ad us
 
 {-  adressTaken adress users
-    Checks if an adress already exists in user list.
+    Checks if an adress already has been taken by some user in users.
     RETURNS: Bool stating if adress exists in user list.
 -}
 adressTaken :: String -> [User] -> Bool
--- VARIANT: length of users.
+-- VARIANT: length users
 adressTaken ad [] = False
 adressTaken ad (u:us)
         | ad == adress u = True
@@ -251,9 +280,18 @@ validTransaction blockchain (Transaction sender receiver amount) password =
             else False
         else False
 
+{-  allTransactions blockchain
+    Takes a blockchain and returns a list of all transactions in that blockchain, see allTransactionsAux
+    RETURNS: a list of transactions from blockchain
+-}
 allTransactions :: Blockchain -> [Transaction]
 allTransactions (Blockchain blocks) = allTransactionsAux blocks
 
+{-  allTransactionsAux blocks
+    Retrieves all transactions from each block by recursively going through blocks
+    RETURNS: a list of transactions from list of blocks
+-}
 allTransactionsAux :: [Block] -> [Transaction]
+-- VARIANT: length blocks
 allTransactionsAux [] = []
 allTransactionsAux (block:blocks) = transactions block ++ allTransactionsAux blocks
