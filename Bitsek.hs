@@ -185,6 +185,9 @@ aggUser :: User -> [Transaction] -> User
 aggUser u [] = u
 aggUser u (t:ts) = aggUser (updateUser u t) ts
 
+{-  updateUser user transaction
+    RETURNS:
+-}
 updateUser :: User -> Transaction -> User 
 updateUser (User ad pkey balance) (Transaction sender receiver amount)
     | ad == (adress sender) = (User ad pkey (balance-amount))
