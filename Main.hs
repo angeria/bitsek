@@ -74,17 +74,17 @@ sendBitsek (pb, bc, us) = do
     let pbPf = proof pb
     let pbPh = previousHash pb
 
-    s <- safeGetLine "Type in sender adress: "
+    s <- userCommunicate "Type in sender adress: "
     let sender = (getUser s us bc)
     -- What if user not found? how to handle?
 
-    pw <- safeGetLine "Type in sender password: "
+    pw <- userCommunicate "Type in sender password: "
 
-    r <- safeGetLine "Type in receiver adress"
+    r <- userCommunicate "Type in receiver adress"
     let receiver = (getUser r us bc)
     -- What if user not found? how to handle?
     
-    a <- safeGetLine "Type in amount to send: "
+    a <- userCommunicate "Type in amount to send: "
     let amount = (read a :: Int)
     -- TO DO: implement try & catch exception handler with Either monad
 
@@ -109,7 +109,7 @@ showBalance (pb, bc, us) = do
 
     --putStrLn "Input adress:"
     --username <- getLine
-    username <- safeGetLine "Input adress: "
+    username <- userCommunicate "Input adress: "
 
     putStrLn ("Account balance of user " ++ username ++ " is:")
     let user = getUser username us bc
@@ -199,14 +199,14 @@ printUsersAux (u:us) = do
 createUser :: (Block, Blockchain, [User]) -> IO b    
 createUser (pb, bc, us) = do
     putStrLn "--------------------------------" 
-    ad <- safeGetLine "Choose an adress"
+    ad <- userCommunicate "Choose an adress"
     
     if (adressTaken ad us)
         then do 
             putStrLn "Adress has been taken."
             createUser (pb, bc, us)
         else do
-            pw <- safeGetLine "Choose a password"
+            pw <- userCommunicate "Choose a password"
             let pk = encryptPassword pw
         
             let u = (User ad pk 1000)
@@ -222,8 +222,8 @@ createUser (pb, bc, us) = do
             program (pb, bc, us')
             
 -- Experimenting
-safeGetLine :: String -> IO String
-safeGetLine msg = do
+userCommunicate :: String -> IO String
+userCommunicate msg = do
     putStrLn msg
     input <- getLine 
     putStrLn ""
@@ -233,7 +233,7 @@ safeGetLine msg = do
     putStrLn ""
     case answer of 
         "y" -> return input
-        "n" -> safeGetLine "Ok, try again."
+        "n" -> userCommunicate "Ok, try again."
     
 
 
