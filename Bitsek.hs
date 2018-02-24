@@ -19,16 +19,19 @@ import Data.ByteString.Conversion
 -- DATA TYPES --
 ----------------
 
-{-  User Adress PrivateKey Balance
-    - Adress: A public adress that money can be sent to.
-    - PrivateKey: The hash of a secret password needed to send a transaction from the users wallet.
-    - Balance: The user's total funds.
+{-  User
+      - Adress: Public adress that money can be sent to.
+      - PrivateKey: The hash of a secret password needed to send a transaction from a user's wallet.
+      - Balance: User's total funds.
 -}
 data User = User { adress :: String
                  , privateKey :: String 
                  , balance :: Int 
                  } deriving (Show)
 
+{-  Transaction
+    Transaction with a sender, receiver and amount.
+-}
 data Transaction = Transaction { sender :: User
                                , receiver :: User
                                , amount :: Int
@@ -37,7 +40,7 @@ data Transaction = Transaction { sender :: User
 {-  Block
     A block with the following information:
         Index: The index of the block, where the first block in the blockchain (the "genesis block") has index 0.
-        Transactions: A list of all the transactions in that block.
+        Transactions: List of all the transactions in that block.
         Proof: The nonce (an arbitrary Int), that when hashed with the previous block gives a string that matches a predefined condition.
         PreviousHash: The hash of the block before the current block in the blockchain.
 -}
@@ -49,7 +52,7 @@ data Block = Block { index :: Int
 
 {-  Blockchain
     Represents a list of blocks.
-    INVARIANT: The latest block has to be the head of the list of blocks.
+    INVARIANT: The latest mined block has to be the head of the list of blocks.
 
 -}
 data Blockchain = Blockchain [Block] deriving (Show)
@@ -67,26 +70,25 @@ addToBlockchain :: Blockchain -> Block -> Blockchain
 addToBlockchain (Blockchain blocks) newBlock = Blockchain (newBlock:blocks)
 
 {-	validBlockchain blockchain
-	Checks that a blockchain is valid by verifying that every block hash meets the proof of work precondition.
+	Checks that a blockchain is valid by verifying that every block's hash meets the proof of work precondition.
 	RETURNS: Bool saying if blockchain is valid or not.
 -}
 validBlockchain :: Blockchain -> Bool
-validBlockchain (Blockchain blocks) = validBlockchainAux (reverse blocks) 
-
-{- 	validBlockchainAux blocks
-	Checks that every block in a list of blocks meets the proof of work precondition.
-	RETURNS: Bool saying if every block blocks is valid, or if at least one is incorrect.
--}
-validBlockchainAux :: [Block] -> Bool
--- VARIANT: Length of the list blocks.
-validBlockchainAux [] = True
-validBlockchainAux [x] = True
-validBlockchainAux (x:xs)
-   | hashBlock x (proof (head xs)) == (previousHash (head xs)) = validBlockchainAux xs
-   | otherwise = False
+validBlockchain (Blockchain blocks) = validBlockchainAux (reverse blocks)
+  where
+    {- 	validBlockchainAux blocks
+    	Checks that every block in a list of blocks meets the proof of work precondition.
+    	RETURNS: Bool saying if every block blocks is valid, or if at least one is incorrect.
+    -}
+    validBlockchainAux :: [Block] -> Bool
+    -- VARIANT: Length of the list blocks.
+    validBlockchainAux [] = True
+    validBlockchainAux [x] = True
+    validBlockchainAux (x:xs)
+       | hashBlock x (proof (head xs)) == (previousHash (head xs)) = validBlockchainAux xs
+       | otherwise = False
 
 {-  lastBlock blockchain 
-
     Takes a blockchain and returns the last block in it.
     PRE: blockchain must be non-empty.
     RETURNS: last block in blockchain.
@@ -117,16 +119,19 @@ newBlock blockchain block = Block newIndex newTransactions proof previousHash
 -}
 mineBlock :: Block -> (String, Int)
 mineBlock block = mineBlockAux block 0
-
-mineBlockAux :: Block -> Int -> (String, Int)
-mineBlockAux block nonce
-    | head hashResult == '0' 
-        && hashResult !! 1 == '0'
-        && hashResult !! 2 == '0'
-        = (hashResult, nonce)
-    | otherwise = mineBlockAux block (nonce + 1)
-        where
-            hashResult = hashBlock block nonce
+  where
+    {-  mineBlockAux block nonce
+        Checks if the combined hash of block and a nonce start with 
+    -}
+    mineBlockAux :: Block -> Int -> (String, Int)
+    mineBlockAux block nonce
+        | head hashResult == '0' 
+            && hashResult !! 1 == '0'
+            && hashResult !! 2 == '0'
+            = (hashResult, nonce)
+        | otherwise = mineBlockAux block (nonce + 1)
+            where
+                hashResult = hashBlock block nonce
 
 {-  hashBlock block nonce
     Takes a block and a nonce and hashes it with SHA256.
