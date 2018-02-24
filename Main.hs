@@ -1,19 +1,20 @@
 import Bitsek
 import Tests
 
+import System.Exit
+
 --------------
 ---- APP -----
 --------------
 
 main :: IO b
 main = do 
-    let initPendingBlock = (Block 0 [] 0 "")
-    let initBlockchain = (Blockchain [genesisBlock])
-    let initUsers = [fabbe, benne, hogge, dave]
-    program (initPendingBlock, initBlockchain, initUsers)
+    let initpb = (Block 0 [] 0 "")
+    let initbc = (Blockchain [genesisBlock])
+    let initus = [fabbe, benne, hogge, dave]
+    program (initpb, initbc, initus)
 
 {-
-
  PRE:
  POST: 
  RETURNS:
@@ -30,6 +31,7 @@ program (pb, bc, us) = do
         "show" -> printTransactions (pb, bc, us)
         "new" -> createUser (pb, bc, us)
         "list" -> printUsers (pb, bc, us)
+        "q" -> exitWith ExitSuccess
 
 {-
     Trivial menu output
@@ -47,6 +49,7 @@ menu = do
     putStrLn "4. Show verified transactions [show]"
     putStrLn "5. Create a new user [new]"
     putStrLn "6. List all users [list]"
+    putStrLn "7. Quit [q]"
     putStrLn "--------------------------------"    
     putStrLn "What do you want to do?"
     putStrLn "--------------------------------" 
