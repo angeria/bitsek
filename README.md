@@ -170,24 +170,22 @@ validBlockchainAux (x:xs)
    | otherwise = False
 ```
 
-#### Main, Program and State
+#### Main, Program and State Architecture
 
-State is a question of necessity. In order for user interactions to be useful over time we need to store the state of pending transactions (those transactions who are waiting to be mined and verified), the blockchain itself and a list users.
+State is a question of necessity. In order for user interactions to be useful over time we need to store the state of pending transactions (those transactions who are waiting to be mined and verified), the blockchain itself and a finally a list of users.
 
-We decided to go with the straight forward approach of passing around state in our main program loop and mutate it as we go. 
-
-First we set up initial values for an empty pending block, a blockchain with only the genesis block and a list containing only root users. The main function then preceeds to call program with these three values as arguments.
+We decided to go with the straight forward approach of passing around state in our main program loop and mutate it as we go. We start off by setting up initial values for an empty pending block (_initpb_), a blockchain only containing the genesis block (_initbc_) and a list containing root users (_initus_). _main_ ends its work by calling _program_ with these values as arguments.
 
 ```haskell
 main :: IO b
 main = do 
-    let initPendingBlock = (Block 0 [] 0 "")
-    let initBlockchain = (Blockchain [genesisBlock])
-    let initUsers = [fabbe, benne, hogge, dave]
-    program (initPendingBlock, initBlockchain, initUsers)
+    let initpb = (Block 0 [] 0 "")
+    let initbc = (Blockchain [genesisBlock])
+    let initus = [fabbe, benne, hogge, dave]
+    program (initpb, initbc, initus)
 ```
 
-Program then handles the interactive I/O loop so to speak. It simply prints out a menu of options and asks the user for some action. It then delegates the action to the correct subfunction and the program continues from there. Without getting into details of all subfunctions, it is useful to know that these subfunctions always end by again calling program, possibly (usually) with modified state values as new arguments.
+_program_ handles the interactive I/O loop so to speak. _menu_ prints out a menu of options and asks the user for some _action_. It then delegates the _action_ to the correct subfunction and the program continues from there.
 
 ```haskell
 program :: (Block, Blockchain, [User]) -> IO b
@@ -201,6 +199,57 @@ program (pb, bc, us) = do
         "show" -> printTransactions (pb, bc, us)
         "new" -> createUser (pb, bc, us)
         "list" -> printUsers (pb, bc, us)
+	"q" -> exitWith ExitSuccess
+```
+An informal convention is that these subfunctions always end by again calling _program_, possibly (usually) with modified state values as new arguments. If state x is modified, the modified state value is then be denoted as x'.
+
+#### Program Subfunctions
+
+_sendBitsek_ handles the sending of bitsek between users by adding a transaction request to the pending block. It asks the user for some information, namely; _sender_, _sender password_, _receiver_ and _amount_ to send. It then controls whether the entered password is correct and if _sender_ has sufficient funds. If so, then a transaction is created and added to the pending block, containing a list of transactions requests. Finally it calls _program_ with a modified pending block state, _pb'_.   
+
+```haskell
+sendBitsek :: (Block, Blockchain, [User]) -> IO b
+sendBitsek (pb, bc, us) = do 
+
+	-- a bunch of statements
+	
+	program (pb', bc, us)
+	
+```
+
+Reminder: If you want your transaction verified and added to the blockchain, you have to mine the pending block. This job is done by _mineBitsek_
+
+```haskell
+mineBitsek :: (Block, Blockchain, [User]) -> IO b
+mineBitsek (pb, bc, us) = do
+
+    -- another bunch of statements
+
+    program (pb', bc', us)
+```
+
+_mineBitsek_ utilises the pure function _newBlock_ to secure and verify requested transactions and add them to the blockchain. Read more about this in the "Mining blocks" section above.
+
+_printTransactions_ fetches all transactions from the current blockchain (that is, all thus far mined transactions). 
+
+```haskell
+printTransactions :: (Block, Blockchain, [User]) -> IO b
+printTransactions (pb, bc, us) = do
+    putStrLn "--------------------------------" 
+    printTransactionsAux (allTransactions bc)
+
+    putStrLn "Press enter to go back to main menu."
+    getChar
+    program (pb, bc, us)
+
+printTransactionsAux :: [Transaction] -> IO ()
+printTransactionsAux [] = putStrLn ""
+printTransactionsAux (t:ts) = do
+    let s = adress (sender t)
+    let r = adress (receiver t)
+    let a = show (amount t)
+    putStrLn ("From: " ++ s ++ "  |  To: " ++ r ++ "  |  Amount: " ++ a)
+    printTransactionsAux ts
 ```
 
 #### Control Flow
