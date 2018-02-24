@@ -7,6 +7,7 @@ import System.Exit
 ---- APP -----
 --------------
 
+
 main :: IO b
 main = do 
     let initpb = (Block 0 [] 0 "")
@@ -14,11 +15,11 @@ main = do
     let initus = [fabbe, benne, hogge, dave]
     program (initpb, initbc, initus)
 
-{-
- PRE:
- POST: 
- RETURNS:
- EXAMPLE:
+
+{-  program block blockchain users 
+
+   Runs the show. Prints a menu, takes an action and delegates the action to the adequate subfunction.
+
 -}
 program :: (Block, Blockchain, [User]) -> IO b
 program (pb, bc, us) = do 
@@ -32,9 +33,15 @@ program (pb, bc, us) = do
         "new" -> createUser (pb, bc, us)
         "list" -> printUsers (pb, bc, us)
         "q" -> exitWith ExitSuccess
+        _ -> do 
+            putStrLn "Invalid command. Press enter to try again."
+            getChar
+            program (pb, bc, us)
 
-{-
-    Trivial menu output
+{- menu 
+
+    Trivial menu output (exists to keep program more readable)
+
 -}
 menu :: IO ()
 menu = do 
@@ -54,12 +61,11 @@ menu = do
     putStrLn "What do you want to do?"
     putStrLn "--------------------------------" 
 
-{-
+{- sendBitsek block blockchain users
 
- PRE:
- POST: 
- RETURNS:
- EXAMPLE:
+    Let's the user request a transaction. Retrieves, validates and conditionally stores 
+    transactional information in state.
+
 -}
 sendBitsek :: (Block, Blockchain, [User]) -> IO b
 sendBitsek (pb, bc, us) = do 
@@ -97,18 +103,18 @@ sendBitsek (pb, bc, us) = do
             putStrLn "Redirecting back to menu."
             program (pb, bc, us)
 
-{-
+{- showBalance block blockchain users
 
- PRE:
- POST: 
- RETURNS:
- EXAMPLE:
+    Asks the user for an user adress and shows the corresponding user balance.
+
 -}
 showBalance :: (Block, Blockchain, [User]) -> IO b
 showBalance (pb, bc, us) = do
 
-    putStrLn "Input adress:"
-    username <- getLine
+    --putStrLn "Input adress:"
+    --username <- getLine
+    username <- safeGetLine "Input adress: "
+
     putStrLn ("Account balance of user " ++ username ++ " is:")
     let user = getUser username us bc
     putStrLn ((show $ balance user) ++ " Bitsek")
@@ -118,12 +124,10 @@ showBalance (pb, bc, us) = do
 
     program (pb, bc, us)
 
-{-
-
- PRE:
- POST: 
- RETURNS:
- EXAMPLE:
+{- mineBitsek block blockchain users
+    Mines the pending block and adds it to the blockchain.
+    SIDE EFFECTS: Modifies state variables pending block and blockchain
+    RETURNS: 
 -}
 mineBitsek :: (Block, Blockchain, [User]) -> IO b
 mineBitsek (pb, bc, us) = do
@@ -143,12 +147,11 @@ mineBitsek (pb, bc, us) = do
 
     program (pb', bc', us)
 
-{-
+{- printTransactions block blockchain users
 
- PRE:
- POST: 
- RETURNS:
- EXAMPLE:
+    Prepares transactional data for printTransactionsAux whom in return print the transactions
+    SIDE EFFECTS: Prints stuff to the console
+
 -}
 printTransactions :: (Block, Blockchain, [User]) -> IO b
 printTransactions (pb, bc, us) = do
@@ -159,6 +162,12 @@ printTransactions (pb, bc, us) = do
     getChar
     program (pb, bc, us)
 
+{- printTransactionsAux transactions
+
+    Handles the actual printing of transactions from a list given by printTransactions.
+    SIDE EFFECTS: Prints stuff to the console
+
+-}
 printTransactionsAux :: [Transaction] -> IO ()
 printTransactionsAux [] = putStrLn ""
 printTransactionsAux (t:ts) = do
@@ -168,12 +177,7 @@ printTransactionsAux (t:ts) = do
     putStrLn ("From: " ++ s ++ "  |  To: " ++ r ++ "  |  Amount: " ++ a)
     printTransactionsAux ts
 
-{-
-
- PRE:
- POST: 
- RETURNS:
- EXAMPLE:
+{- 
 -}
 printUsers :: (Block, Blockchain, [User]) -> IO b
 printUsers (pb, bc, us) = do 
@@ -184,6 +188,8 @@ printUsers (pb, bc, us) = do
     getChar
     program (pb, bc, us)
 
+{-
+-}
 printUsersAux :: [User] -> IO ()
 printUsersAux [] = putStrLn ""
 printUsersAux (u:us) = do 
@@ -192,12 +198,7 @@ printUsersAux (u:us) = do
     putStrLn ("Public adress: " ++ ad ++ " | Balance: " ++ bal)
     printUsersAux us
 
-{-
-
- PRE:
- POST: 
- RETURNS:
- EXAMPLE:
+{- createUser
 -}
 createUser :: (Block, Blockchain, [User]) -> IO b    
 createUser (pb, bc, us) = do
@@ -225,3 +226,15 @@ createUser (pb, bc, us) = do
             putStrLn "Press enter to go back to main menu."
             getChar
             program (pb, bc, us')
+            
+-- Experimenting
+safeGetLine :: String -> IO String
+safeGetLine msg = do
+    putStrLn msg
+    input <- getLine 
+    putStrLn ("Input: " ++ input ++ " - Are you happy with your input? y/n")
+    answer <- getLine
+    case answer of 
+        "y" -> return input
+        "n" -> safeGetLine "Ok, try again."
+    
