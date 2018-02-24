@@ -75,18 +75,18 @@ addToBlockchain (Blockchain blocks) newBlock = Blockchain (newBlock:blocks)
 -}
 validBlockchain :: Blockchain -> Bool
 validBlockchain (Blockchain blocks) = validBlockchainAux (reverse blocks)
-  where
-    {- 	validBlockchainAux blocks
-    	Checks that every block in a list of blocks meets the proof of work precondition.
-    	RETURNS: Bool saying if every block blocks is valid, or if at least one is incorrect.
-    -}
-    validBlockchainAux :: [Block] -> Bool
-    -- VARIANT: Length of the list blocks.
-    validBlockchainAux [] = True
-    validBlockchainAux [x] = True
-    validBlockchainAux (x:xs)
-       | hashBlock x (proof (head xs)) == (previousHash (head xs)) = validBlockchainAux xs
-       | otherwise = False
+
+{- 	validBlockchainAux blocks
+	Checks that every block in a list of blocks meets the proof of work precondition.
+	RETURNS: Bool saying if every block blocks is valid, or if at least one is incorrect.
+-}
+validBlockchainAux :: [Block] -> Bool
+-- VARIANT: Length of the list blocks.
+validBlockchainAux [] = True
+validBlockchainAux [x] = True
+validBlockchainAux (x:xs)
+   | hashBlock x (proof (head xs)) == (previousHash (head xs)) = validBlockchainAux xs
+   | otherwise = False
 
 {-  lastBlock blockchain 
     Takes a blockchain and returns the last block in it.
@@ -116,26 +116,31 @@ newBlock blockchain block = Block newIndex newTransactions proof previousHash
 {-  mineBlock block
     Runs a proof of work mechanism on block.
     RETURNS: Hash of block beginning with three 0's and a proof.
+    EXAMPLE: mineBlock testBlock1 = ("00035fee66451dbc750d037bec5c5cb6e7f5e17c6a721e34db2de8be92d9dd1a",2719)
 -}
 mineBlock :: Block -> (String, Int)
 mineBlock block = mineBlockAux block 0
-  where
-    {-  mineBlockAux block nonce
-        Checks if the combined hash of block and a nonce start with 
-    -}
-    mineBlockAux :: Block -> Int -> (String, Int)
-    mineBlockAux block nonce
-        | head hashResult == '0' 
-            && hashResult !! 1 == '0'
-            && hashResult !! 2 == '0'
-            = (hashResult, nonce)
-        | otherwise = mineBlockAux block (nonce + 1)
-            where
-                hashResult = hashBlock block nonce
+
+{-  mineBlockAux block nonce
+    Checks if the combined hash of block and a nonce starts with three 0's - if not, it tries with (nonce + 1).
+    RETURNS: Tuple with combined hash that starts with three 0's of block and nonce, and the nonce.
+    EXAMPLES: mineBlockAux testBlock1 0 = ("00035fee66451dbc750d037bec5c5cb6e7f5e17c6a721e34db2de8be92d9dd1a",2719)
+              mineBlockAux testBlock1 2720 = ("000c00bb3592de90a0cda8a495e01df35f0a0fd93327190b9dedf1d1ef765a0f",5670)
+-}
+mineBlockAux :: Block -> Int -> (String, Int)
+mineBlockAux block nonce
+    | head hashResult == '0' 
+        && hashResult !! 1 == '0'
+        && hashResult !! 2 == '0'
+        = (hashResult, nonce)
+    | otherwise = mineBlockAux block (nonce + 1)
+        where
+            hashResult = hashBlock block nonce
 
 {-  hashBlock block nonce
     Takes a block and a nonce and hashes it with SHA256.
-    RETURNS: Hash of nonce (arbitrary number) and the information in block.
+    RETURNS: Hash of nonce, and the transactions and previousHash in block.
+    EXAMPLE: hashBlock testBlock1 0 = "24d7f209983efe43e31af70e822d73f163853eb6f5a12cf90637098113bf75f4"
 -}
 hashBlock :: Block -> Int -> String
 hashBlock block nonce = show $ hashWith SHA256 $ toByteString' $ (show nonce ++ previousHash block ++ transactionsToString block)
@@ -146,16 +151,16 @@ hashBlock block nonce = show $ hashWith SHA256 $ toByteString' $ (show nonce ++ 
 
 {-  encryptPassword password
     Takes a password and encrypts it with SHA256.
-    RETURNS: A hashed string of password.
+    RETURNS: Hashed string of password.
     EXAMPLE: encryptPassword "test" = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"
 -}
 encryptPassword :: String -> String
 encryptPassword password = show $ hashWith SHA256 $ toByteString' password
 
 {-	validPassword user password
-	Checks if the password is valid for the given user.
-	RETURNS: Bool saying if password is valid for user.
-	EXAMPLE: validPassword fabbe "singularity" = True
+  	Checks if the password is valid for the given user.
+  	RETURNS: Bool saying if password is valid for user.
+  	EXAMPLE: validPassword fabbe "singularity" = True
 -}
 validPassword :: User -> String -> Bool
 validPassword (User _ privateKey _) password
@@ -163,18 +168,12 @@ validPassword (User _ privateKey _) password
     | otherwise = False 
 
 {-	userBalance user blockchain
-	
-	RETURNS: 
-	EXAMPLE:
+    RETURNS: Balance of user in blockchain.
+    EXAMPLE: userBalance benne testBlockchain = 1000
 -}
 userBalance :: User -> Blockchain -> Int
 userBalance user blockchain = balance (aggUser user (allTransactions blockchain))    
 
-{-	userBalance user blockchain
-	
-	RETURNS: 
-	EXAMPLE:
--}
 aggUsers :: [User] -> Blockchain -> [User]
 aggUsers us b = aggUsersAux us (allTransactions b)
 
@@ -182,11 +181,6 @@ aggUsersAux :: [User] -> [Transaction] -> [User]
 aggUsersAux [] _ = []
 aggUsersAux (u:us) ts = aggUser u ts : aggUsersAux us ts
 
-{-	userBalance user blockchain
-	
-	RETURNS: 
-	EXAMPLE:
--}
 aggUser :: User -> [Transaction] -> User
 aggUser u [] = u
 aggUser u (t:ts) = aggUser (updateUser u t) ts
@@ -197,10 +191,8 @@ updateUser (User ad pkey balance) (Transaction sender receiver amount)
     | ad == (adress receiver) = (User ad pkey (balance+amount))
     | otherwise = (User ad pkey balance)
 
-{- getUser adress blockchain
-Returns the user with the given adress, with correct current balance
-PRE: 
-POST: User has correct balance
+{-  getUser adress blockchain
+    RETURNS: user with the given adress, with correct current balance.
 -}
 getUser :: String -> [User] -> Blockchain -> User 
 getUser ad us b = getUserAux ad (aggUsers us b)
@@ -211,12 +203,12 @@ getUserAux ad (u:us)
     | ad == adress u = u
     | otherwise = getUserAux ad us
 
-{- adressNotTaken adress blockchain
-Returns the user with the given adress, with correct current balance
-PRE: 
-POST: User has correct balance
+{-  adressTaken adress users
+    Checks if an adress already exists in user list.
+    RETURNS: Bool stating if adress exists in user list.
 -}
-adressTaken :: String -> [User] -> Bool 
+adressTaken :: String -> [User] -> Bool
+-- VARIANT: length of users.
 adressTaken ad [] = False
 adressTaken ad (u:us)
         | ad == adress u = True
@@ -229,6 +221,7 @@ adressTaken ad (u:us)
 {-  transactionsToString block
     Takes a block and returns a concatenation of the whole data structure into a string.
     RETURNS: String of all transaction data in block.
+    EXAMPLE: transactionsToString testBlock2 = "Fabbe100Benne10020"
 -}
 transactionsToString :: Block -> String
 transactionsToString block = transactionsToStringAux (transactions block)
@@ -243,9 +236,9 @@ transactionsToString block = transactionsToStringAux (transactions block)
             userToString :: User -> String
             userToString (User adress _ balance) = adress ++ show balance
 
-{- 	validTransaction blockchain transaction password
-	Checks if the sender has enough funds and that the given password is valid.
-	RETURNS: Bool stating if transaction is valid.
+{-  validTransaction blockchain transaction password
+    Checks if the sender has enough funds and that the given password is valid.
+    RETURNS: Bool stating if transaction is valid.
 -}
 validTransaction :: Blockchain -> Transaction -> String -> Bool
 validTransaction blockchain (Transaction sender receiver amount) password = 
