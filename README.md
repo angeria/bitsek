@@ -3,22 +3,21 @@
 
 ## Table of Contents
 - [Bitsek](#bitsek)
-  * [Table of Contents](#table-of-contents)
   * [About](#about)
-  * [Developers](#developers)
-  * [Introduction](#introduction)
-  * [Features](#features)
+    + [Contributors](#contributors)
+    + [Introduction](#introduction)
+    + [Features](#features)
   * [Getting started](#getting-started)
     + [Requirements](#requirements)
     + [Usage](#usage)
     + [Testing](#testing)
   * [Program Documentation](#program-documentation)
     + [Data Structures](#data-structures)
-    + [Functions & Algorithms](#functions-algorithms)
+    + [Functions and Algorithms](#functions-and-algorithms)
       - [Mining blocks](#mining-blocks)
       - [Encrypting passwords](#encrypting-passwords)
       - [Validating the blockchain](#validating-the-blockchain)
-      - [Main, Program and State Architecture](#main-program-and-state-architecture)
+      - [Main Program and State Architecture](#main-program-and-state-architecture)
       - [Program Subfunctions](#program-subfunctions)
       - [Control Flow](#control-flow)
   * [Future Improvements](#future-improvements)
@@ -30,15 +29,15 @@
 ## About
 This is a Haskell project in the course "Program Design and Data Structures" during spring term 2018 at Uppsala University.
 
-## Contributors
+### Contributors
 Benjamin Angeria, Holger Swartling and Fabian Haglund.
 
-## Introduction
+### Introduction
 Bitsek is a locally run cryptocurrency with a non-distributed ledger. The ledger is stored in a blockchain with a proof of work-mechanism based on hashing with SHA256. In its current state, no network is involved and no information is saved after the session is closed.
 
 The program has side-effects and IO in _Main.hs_ to interact with the user. However, the core in _Bitsek.hs_ which does the heavy lifting is functionally pure. 
 
-## Features
+### Features
 
 - Set up a blockchain.
 - Send and receive cryptocurrency locally to/from other users.
@@ -146,7 +145,7 @@ The fourth and last data type used, is Blockchain. It represents a list of block
 data Blockchain = Blockchain [Block]
 ```
 
-### Functions & Algorithms
+### Functions and Algorithms
 
 #### Mining blocks
 
@@ -198,7 +197,7 @@ validBlockchainAux (x:xs)
    | otherwise = False
 ```
 
-#### Main, Program and State Architecture
+#### Main Program and State Architecture
 
 State is a question of necessity. In order for user interactions to be useful over time we need to store the state of pending transactions (those transactions who are waiting to be mined and verified), the blockchain itself and a finally a list of users.
 
