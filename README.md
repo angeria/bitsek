@@ -54,7 +54,7 @@ Run it by typing in:
 & ./Main
 ```
 
-You should be greeted with the main menu.
+You should be greeted with the main menu. Let's take Bitsek for a test drive.
 ![main-menu](https://i.imgur.com/NC94yKZ.png)
 
 A natural first step as a new user would be to create a new user. Do this by writing _new_ and press enter. Here we are creating an account for Mr. Satoshi Nakamoto. He is immediately gifted with 1000 Bitsek.
@@ -62,10 +62,21 @@ A natural first step as a new user would be to create a new user. Do this by wri
 
 Satoshi wants to send all his newly aquired Bitsek to someone. He first has to take a look at the user list by typing in _list_. He recognizes his friend Dave and sends all his Bitsek to him by typing in _send_. He inputs his own adress, password, dave's adress, and amount. Confirm the input by typing _y_ or _n_ after every input. 
 
-**CAUTION**: Be precise with your input. It would be tragic if you send your Bitsek to the wrong person. There are no refunds in the blockchain world.
-![users]()
+**CAUTION**: Be precise with your input. It would be very tragic if you'd mistakenly send your Bitsek to the wrong person. There are no refunds in the blockchain world - code is law.
+![users](https://i.imgur.com/iAxNTT0.png)
 
-You could now for example send some Bitsek to someone by choosing the _send_ option. Type in _send_ and press enter. Then input your adress, password, the reciever's address and the amount. After you have completed the transaction, you have to choose the _mine_ option for it to be verified and added to the blockchain.
+Everything went smooth. Satoshi takes a look at the user list again to see if Dave has received his Bitsek.
+![after-send](https://i.imgur.com/lQGXecJ.png)
+
+What it this? It seems like nothing has happened. Does Satoshi have to wait 2-3 banking days before the tranaction has cleared? The answer is no - he simply has to do some mining. For the transaction to be confirmed and part of the the blockchain, the current block with all pending transactions has to be mined. 
+
+Satoshi decides to mine the block by running _mine_ from the main menu. His computer does the embedded proof-of-work-mechanism by solving a crypographic puzzle to prove he has invested time and hash power.
+
+![mine](https://i.imgur.com/yfwg6RP.png)
+
+And just like that, the transaction has been put into the ledger.
+
+![after-mine](https://i.imgur.com/IXYIqs5.png)
 
 The video below shows a typical use case.
 
