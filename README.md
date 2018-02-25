@@ -2,6 +2,30 @@
 > A simple cryptocurrency in Haskell.
 
 ## Table of Contents
+- [Bitsek](#bitsek)
+  * [About](#about)
+  * [Contributors](#contributors)
+  * [Introduction](#introduction)
+  * [Features](#features)
+  * [Getting started](#getting-started)
+    + [Requirements](#requirements)
+    + [Usage](#usage)
+    + [Testing](#testing)
+  * [Program Documentation](#program-documentation)
+    + [Data Structures](#data-structures)
+    + [Functions & Algorithms](#functions--algorithms)
+      - [Mining blocks](#mining-blocks)
+      - [Encrypting passwords](#encrypting-passwords)
+      - [Validating the blockchain](#validating-the-blockchain)
+      - [Main, Program and State Architecture](#main-program-and-state-architecture)
+      - [Program Subfunctions](#program-subfunctions)
+      - [Control Flow](#control-flow)
+  * [Future Improvements](#future-improvements)
+    + [User Interface](#user-interface)
+    + [Write to file](#write-to-file)
+    + [Network and Consensus](#network-and-consensus)
+    + [Mining Reward](#mining-reward)
+
 
 ## About
 This is a Haskell project in the course "Program Design and Data Structures" during spring term 2018 at Uppsala University.
