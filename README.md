@@ -16,7 +16,7 @@ The program has side-effects and IO in _Main.hs_ to interact with the user. Howe
 
 ## Features
 
-- Set up a blockchain.
+- Set up a blockchain with a local ledger.
 - Send and receive cryptocurrency locally to/from other users.
 - Mine blocks.
 - Show verified transactions.
@@ -40,13 +40,13 @@ $ cabal install bytestring-conversion
 
 ### Usage
 
-It's time to build the source.
+It's time to build the source with GHC by running:
 
 ```
 $ ghc Main
 ```
 
-A bunch of new files should've popped up in the repository folder, including a executable file called _Main_.
+A bunch of new files should now have popped up in the repository folder, including a executable file called _Main_.
 
 Run it by typing in:
 
@@ -68,7 +68,7 @@ Satoshi wants to send all his newly aquired Bitsek to someone. He first has to t
 Everything went smooth. Satoshi takes a look at the user list again to see if Dave has received his Bitsek.
 ![after-send](https://i.imgur.com/lQGXecJ.png)
 
-What it this? It seems like nothing has happened. Does Satoshi have to wait 2-3 banking days before the tranaction has cleared? The answer is no - he simply has to do some mining. For the transaction to be confirmed and part of the the blockchain, the current block with all pending transactions has to be mined. 
+What it this? It seems like nothing has happened. Does Satoshi have to wait 2-3 banking days before the transaction has cleared? The answer is no - he simply has to do some mining. For the transaction to be confirmed and part of the the blockchain, the current block with all pending transactions has to be mined.
 
 Satoshi decides to mine the block by running _mine_ from the main menu. His computer does the embedded proof-of-work-mechanism by solving a crypographic puzzle to prove he has invested time and hash power.
 
@@ -78,7 +78,7 @@ And just like that, the transaction has been put into the ledger.
 
 ![after-mine](https://i.imgur.com/IXYIqs5.png)
 
-The video below shows a typical use case.
+Take a look at the video below to see all the functionality in action.
 
 [![asciicast](https://asciinema.org/a/sYSh7OOmaof5QOq3Hy62CUE9I.png)](https://asciinema.org/a/sYSh7OOmaof5QOq3Hy62CUE9I)
 
