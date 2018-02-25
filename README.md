@@ -3,15 +3,29 @@
 
 ## Table of Contents
 - [Bitsek](#bitsek)
+  * [Table of Contents](#table-of-contents)
+  * [About](#about)
+  * [Developers](#developers)
   * [Introduction](#introduction)
-  * [Authors](#authors)
+  * [Features](#features)
   * [Getting started](#getting-started)
     + [Requirements](#requirements)
-    + [Setup](#setup)
-    + [Heads up](#heads-up)
-  * [Table of Contents](#table-of-contents)
-  * [Introduction](#introduction)
-  * [Inner workings](#inner-workings)
+    + [Usage](#usage)
+    + [Testing](#testing)
+  * [Program Documentation](#program-documentation)
+    + [Data Structures](#data-structures)
+    + [Functions & Algorithms](#functions-algorithms)
+      - [Mining blocks](#mining-blocks)
+      - [Encrypting passwords](#encrypting-passwords)
+      - [Validating the blockchain](#validating-the-blockchain)
+      - [Main, Program and State Architecture](#main-program-and-state-architecture)
+      - [Program Subfunctions](#program-subfunctions)
+      - [Control Flow](#control-flow)
+  * [Future Improvements](#future-improvements)
+    + [User Interface](#user-interface)
+    + [Write to file](#write-to-file)
+    + [Network and Consensus](#network-and-consensus)
+    + [Mining Reward](#mining-reward)
 
 ## About
 This is a Haskell project in the course "Program Design and Data Structures" during spring term 2018 at Uppsala University.
@@ -50,8 +64,22 @@ $ cabal install bytestring-conversion
 
 ### Usage
 
-Start off by running the _Main_ executable in the _app_ folder. You should be greeted with the main menu in the terminal.
-![main-menu](https://i.imgur.com/pnNQWa6.png)
+It's time to build the source.
+
+```
+$ ghc Main
+```
+
+A bunch of new files should've popped up in the repository folder, including a executable file called _Main_.
+
+Start off by running the _Main_ executable which you just compiled by typing in:
+
+```
+& ./Main
+```
+
+You should be greeted with the main menu in the terminal.        
+![main-menu](https://i.imgur.com/NC94yKZ.png)
 
 A natural first step as a new user would be to create a new user. Do this by writing _new_ and press enter. Here we are creating an account for Mr. Satoshi Nakamoto. He is immediately gifted with 1000 Bitsek.
 ![new-user](https://i.imgur.com/taYfsBF.png)
