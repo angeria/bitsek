@@ -2,42 +2,19 @@
 > A simple cryptocurrency in Haskell.
 
 ## Table of Contents
-- [Bitsek](#bitsek)
-  * [About](#about)
-    + [Contributors](#contributors)
-    + [Introduction](#introduction)
-    + [Features](#features)
-  * [Getting started](#getting-started)
-    + [Requirements](#requirements)
-    + [Usage](#usage)
-    + [Testing](#testing)
-  * [Program Documentation](#program-documentation)
-    + [Data Structures](#data-structures)
-    + [Functions and Algorithms](#functions-and-algorithms)
-      - [Mining blocks](#mining-blocks)
-      - [Encrypting passwords](#encrypting-passwords)
-      - [Validating the blockchain](#validating-the-blockchain)
-      - [Main Program and State Architecture](#main-program-and-state-architecture)
-      - [Program Subfunctions](#program-subfunctions)
-      - [Control Flow](#control-flow)
-  * [Future Improvements](#future-improvements)
-    + [User Interface](#user-interface)
-    + [Write to file](#write-to-file)
-    + [Network and Consensus](#network-and-consensus)
-    + [Mining Reward](#mining-reward)
 
 ## About
 This is a Haskell project in the course "Program Design and Data Structures" during spring term 2018 at Uppsala University.
 
-### Contributors
+## Contributors
 Benjamin Angeria, Holger Swartling and Fabian Haglund.
 
-### Introduction
+## Introduction
 Bitsek is a locally run cryptocurrency with a non-distributed ledger. The ledger is stored in a blockchain with a proof of work-mechanism based on hashing with SHA256. In its current state, no network is involved and no information is saved after the session is closed.
 
 The program has side-effects and IO in _Main.hs_ to interact with the user. However, the core in _Bitsek.hs_ which does the heavy lifting is functionally pure. 
 
-### Features
+## Features
 
 - Set up a blockchain.
 - Send and receive cryptocurrency locally to/from other users.
@@ -81,10 +58,14 @@ You should be greeted with the main menu.
 ![main-menu](https://i.imgur.com/NC94yKZ.png)
 
 A natural first step as a new user would be to create a new user. Do this by writing _new_ and press enter. Here we are creating an account for Mr. Satoshi Nakamoto. He is immediately gifted with 1000 Bitsek.
-![new-user](https://i.imgur.com/taYfsBF.png)
+![new-user](https://i.imgur.com/K6GsgLa.png)
+
+Satoshi wants to send all his newly aquired Bitsek to someone. He first has to take a look at the user list by typing in _list_. He recognizes his friend Dave and sends all his Bitsek to him by typing in _send_. He inputs his own adress, password, dave's adress, and amount. Confirm the input by typing _y_ or _n_ after every input. 
+
+**CAUTION**: Be precise with your input. It would be tragic if you send your Bitsek to the wrong person. There are no refunds in the blockchain world.
+![users]()
 
 You could now for example send some Bitsek to someone by choosing the _send_ option. Type in _send_ and press enter. Then input your adress, password, the reciever's address and the amount. After you have completed the transaction, you have to choose the _mine_ option for it to be verified and added to the blockchain.
-![send-and-mine](https://i.imgur.com/qjdaE0H.png)
 
 The video below shows a typical use case.
 
@@ -145,7 +126,7 @@ The fourth and last data type used, is Blockchain. It represents a list of block
 data Blockchain = Blockchain [Block]
 ```
 
-### Functions and Algorithms
+### Functions & Algorithms
 
 #### Mining blocks
 
@@ -197,7 +178,7 @@ validBlockchainAux (x:xs)
    | otherwise = False
 ```
 
-#### Main Program and State Architecture
+#### Main, Program and State Architecture
 
 State is a question of necessity. In order for user interactions to be useful over time we need to store the state of pending transactions (those transactions who are waiting to be mined and verified), the blockchain itself and a finally a list of users.
 
