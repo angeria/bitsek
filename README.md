@@ -320,10 +320,10 @@ Bitsek is in an early development phase and there is long way left before it's a
 The user interface of Bitsek is still young and sensitive to peculiar input. It's important to type with clinical accuracy or else the program might crash. Future work will be done to improve the graphical interface as well as implement input and exception handling.
 
 ### Write to file
-As mentioned, a shortcoming of the program is that the blockchain and the transactions it holds doesn't get saved when the terminal is closed. This could be solved by writing everything to a file instead of just keeping it in the memory. This shouldn't be too hard to implement.
+As mentioned, a shortcoming of the program is that the blockchain and the transactions it holds doesn't get saved when the terminal is closed. This could be solved by writing everything to a file instead of just keeping it in the memory.
 
 ### Network and Consensus
-Another more challenging feature is to implement network and blockchain consensus. This would mean that several nodes in a  network could make transactions and mine simultaneously. The consensus mechanism works simply by choosing the longest blockchain with a valid proof-of-work. The blockchain technology hence rely on that the major part of the miners have good intentions to outwork potenial malevolent miners with hash power.
+Another crucial feature to implement is network and blockchain consensus. This would mean that several nodes in a  network could make transactions and mine simultaneously. The consensus mechanism works simply by choosing the longest blockchain with a valid proof-of-work. The blockchain technology hence rely on that the major part of the miners have good intentions to outwork potenial malevolent miners with hash power.
 
 ### Mining Reward
 To amass constructive hash power from nodes, there has to be an incentive for mining. A solution is to give some of the currency as a reward to the node that successfully mines a block. At the same time this reward mechanism acts as the influx of currency into circulation.
