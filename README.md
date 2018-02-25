@@ -30,13 +30,13 @@
 ## About
 This is a Haskell project in the course "Program Design and Data Structures" during spring term 2018 at Uppsala University.
 
-## Developers 
+## Contributors
 Benjamin Angeria, Holger Swartling and Fabian Haglund.
 
 ## Introduction
-Bitsek is a locally run cryptocurrency with a non-distributed ledger. It runs on a blockchain with a proof of work-mechanism based on hashing with SHA256.
+Bitsek is a locally run cryptocurrency with a non-distributed ledger. The ledger is stored in a blockchain with a proof of work-mechanism based on hashing with SHA256. In its current state, no network is involved and no information is saved after the session is closed.
 
-The program has side-effects and IO in _Main.hs_ to interact with the user. However, the core in _Bitsek.hs_ is computationally pure.
+The program has side-effects and IO in _Main.hs_ to interact with the user. However, the core in _Bitsek.hs_ which does the heavy lifting is functionally pure. 
 
 ## Features
 
@@ -55,7 +55,7 @@ Additionally, Bitsek uses the following packages.
 * [cryptonite](https://hackage.haskell.org/package/cryptonite)
 * [bytestring-conversion](https://hackage.haskell.org/package/bytestring-conversion)
 
-Run these commands in the terminal to install them.
+Run these commands in the terminal to install them:
 
 ```
 $ cabal install cryptonite
@@ -72,19 +72,19 @@ $ ghc Main
 
 A bunch of new files should've popped up in the repository folder, including a executable file called _Main_.
 
-Start off by running the _Main_ executable which you just compiled by typing in:
+Run it by typing in:
 
 ```
 & ./Main
 ```
 
-You should be greeted with the main menu in the terminal.        
+You should be greeted with the main menu.
 ![main-menu](https://i.imgur.com/NC94yKZ.png)
 
 A natural first step as a new user would be to create a new user. Do this by writing _new_ and press enter. Here we are creating an account for Mr. Satoshi Nakamoto. He is immediately gifted with 1000 Bitsek.
 ![new-user](https://i.imgur.com/taYfsBF.png)
 
-You could now for example send some Bitsek to someone by choosing the _send_ option. Input your adress, password, the reciever's address and the amount. After you have completed the transaction, you have to choose the _mine_ option for it to be verified and added to the blockchain.
+You could now for example send some Bitsek to someone by choosing the _send_ option. Type in _send_ and press enter. Then input your adress, password, the reciever's address and the amount. After you have completed the transaction, you have to choose the _mine_ option for it to be verified and added to the blockchain.
 ![send-and-mine](https://i.imgur.com/qjdaE0H.png)
 
 The video below shows a typical use case.
