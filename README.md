@@ -87,7 +87,7 @@ You should be greeted with the main menu. Let's take Bitsek for a test drive.
 A natural first step as a new user would be to create a new user. Do this by writing _new_ and press enter. Here we are creating an account for Mr. Satoshi Nakamoto. He is immediately gifted with 1000 Bitsek.
 ![new-user](https://i.imgur.com/K6GsgLa.png)
 
-Satoshi wants to send all his newly aquired Bitsek to someone. He first has to take a look at the user list by typing in _list_. He recognizes his friend Dave and sends all his Bitsek to him by typing in _send_. He inputs his own adress, password, dave's adress, and amount. Confirm the input by typing _y_ or _n_ after every input. 
+Satoshi wants to send all his newly aquired Bitsek to someone. He first has to take a look at the user list by typing in _list_. He recognizes his friend Dave and sends all his Bitsek to him by typing in _send_. He inputs his own adress, password, dave's adress, and amount. Confirm the input by typing _y_, or _n_ to correct it.
 
 **CAUTION**: Be precise with your input. It would be very tragic if you'd mistakenly send your Bitsek to the wrong person. There are no refunds in the blockchain world - code is law.
 ![users](https://i.imgur.com/iAxNTT0.png)
