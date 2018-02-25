@@ -110,7 +110,7 @@ ___
 
 ### Testing
 
-If you want to run unit tests, load _Tests.hs_ in your terminal by typing in the following.
+If you want to run unit tests, load _Tests.hs_ in your terminal by typing in the following:
 
 ```
 $ ghci Tests
@@ -122,18 +122,20 @@ $ runTests
 ## Program Documentation
 
 ### Data Structures
-Bitsek is built around four data types: User, Transaction, Block and Blockchain. 
+Bitsek is built around four data types: **User**, **Transaction**, **Block** and **Blockchain**. 
 
-First of all, let's look at the User data type.
+First of all, let's look at the **User** data type.
+
 ```haskell
 data User = User { adress :: String
                  , privateKey :: String 
                  , balance :: Int 
                  }
 ```
+
 A user in Bitsek is declared with an _adress_, a _private key_ and a _balance_. The _adress_ is a publicly visible name to which people can send Bitsek. The _private key_ is the encrypted hash of a secret password that the user inputs during creation of a new user. The secret password is needed when sending Bitsek. _Balance_ is the user's current account balance.
 
-Secondly, we have the Transaction data type. 
+Secondly, we have the **Transaction** data type. 
 
 ```haskell
 data Transaction = Transaction { sender :: User
@@ -141,9 +143,9 @@ data Transaction = Transaction { sender :: User
                                , amount :: Int
                                }
 ```
-A transaction consists of _sender_, _receiver_ and an _amount_ - all of which are rather self explanatory.
+A transaction consists of _sender_, _receiver_ and _amount_ - all of which are rather self explanatory.
 
-Thirdly, there is the Block data type.
+Thirdly, there is the **Block** data type.
 
 ```haskell
 data Block = Block { index :: Int 
@@ -153,9 +155,9 @@ data Block = Block { index :: Int
                    }
 ```
 
-Compared to User and Transaction, the Block data type is a bit more complex - but nothing to be scared about. It consists of _Index_, _Transactions_, _Proof_, and _PreviousHash_. Every block has an index, and the first block in the blockchain (a.k.a. the _Genesis Block_) has index 0. The blocks after it has 1, 2, 3 and so on. This is to keep track of the order they were created. Each block also has a list of transactions. The list can be empty or it can contain an arbitrary number of transactions. It contains all the transaction that were made since the block before it in the blockchain was mined. Talking about mining brings us to the next component of a block - the _proof_. The proof is the nonce (an arbitrary int), that when hashed together with the previous block gives a string that matches a predefined condition. Lastly, the _PreviousHash_ is simply the hash of the block before it in the blockchain.
+Compared to **User** and **Transaction**, the **Block** data type is a bit more complex - but nothing to be scared about. It consists of _index_, _transactions_, _proof_, and _previous hash_. Every block has an index, where the first block in the blockchain (the _Genesis Block_) has index 0. The blocks after it has 1, 2, 3 and so on. This is to keep track of the order they were created. Each block also has a list of transactions. The list can be empty or it can contain an arbitrary number of transactions. It contains all the transaction that were made since the block before it in the blockchain was mined. Talking about mining brings us to the next component of a block - the _proof_. The proof is the nonce (an arbitrary int), that when hashed together with the previous block gives a string that matches a predefined condition. Lastly, the _previous hash_ is simply the hash of the block before it in the blockchain.
 
-The fourth and last data type used, is Blockchain. It represents a list of blocks where the head of the list is the latest mined block. 
+The fourth and last data type used, is **Blockchain**. It represents a list of blocks where the head of the list is the latest mined block. 
 
 ```haskell
 data Blockchain = Blockchain [Block]
@@ -165,7 +167,7 @@ data Blockchain = Blockchain [Block]
 
 #### Mining blocks
 
-The mining of a block is essential to the inner workings of a blockchain. In order to secure and verify transactions we use a proof of work mechanism that basically makes any given node apply computational power to solve some mathematical problem. In this case finding a nonce that in combination with the input data generates a hash that satisfies a given precondition. In this case the precondition is that the hash begins with three zeroes.
+The mining of a block is essential to the inner workings of a blockchain. In order to secure and verify transactions we use a proof-of-work mechanism that makes any given node apply computational power to solve a cryptographic problem. Here, finding a nonce that in combination with the input data generates a hash that satisfies a given precondition. In this case the precondition is that the resulting hash begins with three 0's.
 
 ```haskell
 mineBlock :: Block -> (String, Int)
@@ -187,9 +189,9 @@ hashBlock block nonce = show $ hashWith SHA256 $ toByteString' $ (show nonce ++ 
 ```
 
 #### Encrypting passwords
-This function makes use of the widely popular SHA256 algorithm to encrypt passwords and protect users. 
+This function makes use of SHA256 to encrypt passwords and protect users. 
 
-In detail, we convert the password of type string into a byte string, we then proceed to hash this string using the aforementioned SHA256 algorithm, finally we call show with the result in order to return the result as a regular string. 
+In detail, we convert the password of type string into a byte string. We then proceed to hash the byte string using the aforementioned SHA256 algorithm. The result is data of type _Digest SHA256_. Therefore, we finally call show on the result to convert it to a regular string.
 
 ```haskell
 encryptPassword :: String -> String
@@ -199,7 +201,7 @@ encryptPassword password = show $ hashWith SHA256 $ toByteString' password
 
 #### Validating the blockchain
 
-The _validBlockchain_ function recurringly checks the blockchain for tampering. The proof of work concept makes this very easy to do. New blocks are hashed with a random nonce to create a hash that conforms to our specifications. The nonce for a particular block is saved in the next block as the _proof_ as well as the _hash_ for that block with that nonce. When looking back, instead of hashing through all ints till the proof is reached we can now have it hash the block with the nonce already provided. If the new hash is the same as the _previousHash_ this particular link of the chain is valid. If any link would be invalid, the chain past that point is invalid as well.
+The _validBlockchain_ function recurringly checks the blockchain for tampering. The proof-of-work concept makes this very easy to do. New blocks are hashed with a random nonce to create a hash that conforms to our specifications. The nonce for a particular block is saved in the next block as the _proof_ as well as the _hash_ for that block with that nonce. When looking back, instead of hashing through all ints till the proof is reached we can now have it hash the block with the nonce already provided. This is extremely faster than the process of actually finding the proofs. If the new hash is the same as the _previousHash_, this particular link of the chain is valid. If any link would be invalid, the chain past that point is invalid as well.
 
 ```haskell
 validBlockchain :: Blockchain -> Bool
@@ -215,7 +217,7 @@ validBlockchainAux (x:xs)
 
 #### Main, Program and State Architecture
 
-State is a question of necessity. In order for user interactions to be useful over time we need to store the state of pending transactions (those transactions who are waiting to be mined and verified), the blockchain itself and a finally a list of users.
+State is a question of necessity. In order for user interactions to be useful over time we need to store the state of pending transactions (those transactions that are waiting to be mined and verified), the blockchain itself and a finally a list of users.
 
 We decided to go with the straight forward approach of passing around state in our main program loop and mutate it as we go. We start off by setting up initial values for an empty pending block (_initpb_), a blockchain only containing the genesis block (_initbc_) and a list containing root users (_initus_). _main_ ends its work by calling _program_ with these values as arguments.
 
@@ -244,9 +246,12 @@ program (pb, bc, us) = do
         "list" -> printUsers (pb, bc, us)
 	"q" -> exitWith ExitSuccess
 ```
+
 An informal convention is that these subfunctions always end by again calling _program_, possibly (usually) with modified state values as new arguments. If state x is modified, the modified state value is then be denoted as x'.
 
 #### Program Subfunctions
+
+##### Sending Bitsek
 
 _sendBitsek_ handles the sending of bitsek between users by adding a transaction request to the pending block. It asks the user for some information, namely; _sender_, _sender password_, _receiver_ and _amount_ to send. It then controls whether the entered password is correct and if _sender_ has sufficient funds. If so, then a transaction is created and added to the pending block, containing a list of transactions requests. Finally it calls _program_ with a modified pending block state, _pb'_.   
 
@@ -260,7 +265,11 @@ sendBitsek (pb, bc, us) = do
 	
 ```
 
-Reminder: If you want your transaction verified and added to the blockchain, you have to mine the pending block. This job is done by _mineBitsek_
+##### Mining
+
+_mineBitsek_ utilises the pure function _newBlock_ to secure and verify requested transactions and add them to the blockchain. Read more about this in the "Mining blocks" section above.
+
+**Reminder**: If you want your transaction verified and added to the blockchain, you have to mine the pending block. This job is done by _mineBitsek_.
 
 ```haskell
 mineBitsek :: (Block, Blockchain, [User]) -> IO b
@@ -271,9 +280,9 @@ mineBitsek (pb, bc, us) = do
     program (pb', bc', us)
 ```
 
-_mineBitsek_ utilises the pure function _newBlock_ to secure and verify requested transactions and add them to the blockchain. Read more about this in the "Mining blocks" section above.
+##### Printing transactions
 
-_printTransactions_ fetches all transactions from the current blockchain (that is, all thus far mined transactions). 
+_printTransactions_ fetches all transactions from the current blockchain (that is, all thus far mined transactions).
 
 ```haskell
 printTransactions :: (Block, Blockchain, [User]) -> IO b
@@ -296,6 +305,8 @@ printTransactionsAux (t:ts) = do
 ```
 
 #### Control Flow
+
+Diagram displaying the control flow of the IO top layer.
 
 ![main-control-flow](https://i.imgur.com/xI7zkDW.png)
 
