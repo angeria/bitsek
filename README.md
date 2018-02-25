@@ -204,7 +204,7 @@ encryptPassword password = show $ hashWith SHA256 $ toByteString' password
 
 #### Validating the blockchain
 
-The _validBlockchain_ function recurringly checks the blockchain for tampering. The proof-of-work concept makes this very easy to do. New blocks are hashed with a random nonce to create a hash that conforms to our specifications. The nonce for a particular block is saved in the next block as the _proof_ as well as the _hash_ for that block with that nonce. When looking back, instead of hashing through all ints till the proof is reached we can now have it hash the block with the nonce already provided. This is extremely faster than the process of actually finding the proofs. If the new hash is the same as the _previousHash_, this particular link of the chain is valid. If any link would be invalid, the chain past that point is invalid as well.
+The _validBlockchain_ function recurringly checks the blockchain for tampering. The proof-of-work concept makes this very easy to do. New blocks are hashed with a random nonce to create a hash that conforms to our specifications. The nonce for a particular block is saved in the next block as the _proof_ as well as the _hash_ for that block with that nonce. When looking back, instead of hashing through all ints till the proof is reached we can now have it hash the block with the nonce already provided. This is a lot faster than the process of actually finding the proofs. If the new hash is the same as the _previousHash_, this particular link of the chain is valid. If any link would be invalid, the chain past that point is invalid as well.
 
 ```haskell
 validBlockchain :: Blockchain -> Bool
@@ -233,7 +233,7 @@ main = do
     program (initpb, initbc, initus)
 ```
 
-_program_ handles the interactive I/O loop so to speak. _menu_ prints out a menu of options and asks the user for some _action_. It then delegates the _action_ to the correct subfunction and the program continues from there.
+_program_ handles the interactive I/O loop so to speak. Firstly, _menu_ prints a menu of options and asks the user for some _action_. _program_ then delegates the _action_ to the correct subfunction and the program continues from there.
 
 ```haskell
 program :: (Block, Blockchain, [User]) -> IO b
@@ -250,7 +250,7 @@ program (pb, bc, us) = do
 	"q" -> exitWith ExitSuccess
 ```
 
-An informal convention is that these subfunctions always end by again calling _program_, possibly (usually) with modified state values as new arguments. If state x is modified, the modified state value is then be denoted as x'.
+An informal convention is that these subfunctions always end by again calling _program_, possibly (usually) with modified state values as new arguments. For any state x that is modified, the modified state value is then denoted as x'.
 
 #### Program Subfunctions
 
