@@ -97,7 +97,7 @@ Everything went smooth. Satoshi takes a look at the user list again to see if Da
 
 What it this? It seems like nothing has happened. Does Satoshi have to wait 2-3 banking days before the transaction has cleared? The answer is no - he simply has to do some mining. For the transaction to be confirmed and part of the the blockchain, the current block with all pending transactions has to be mined.
 
-Satoshi decides to mine the block by running _mine_ from the main menu. His computer does the embedded proof-of-work-mechanism by solving a crypographic puzzle to prove he has invested time and hash power.
+Satoshi decides to mine the block by running _mine_ from the main menu. His computer does the embedded proof-of-work-mechanism by solving a cryptographic puzzle to prove he has invested time and hash power.
 
 ![mine](https://i.imgur.com/yfwg6RP.png)
 
