@@ -11,8 +11,9 @@ import System.Exit
 main :: IO b
 main = do 
     let initpb = (Block 0 [] 0 "")
-    let initbc = (Blockchain [genesisBlock])
+    bc <- readFile "blockchain.txt"
     let initus = [fabbe, benne, hogge, dave]
+    let initbc = read bc :: Blockchain
     program (initpb, initbc, initus)
 
 
@@ -32,11 +33,15 @@ program (pb, bc, us) = do
         "show" -> printTransactions (pb, bc, us)
         "new" -> createUser (pb, bc, us)
         "list" -> printUsers (pb, bc, us)
-        "q" -> exitWith ExitSuccess
+        "q" -> exitProgram bc
         _ -> do 
             putStrLn "Invalid command. Press enter to try again."
             getChar
             program (pb, bc, us)
+
+exitProgram bc = do
+    writeFile "newBlockchain.txt" (show bc)
+    exitWith ExitSuccess
 
 {- menu 
 

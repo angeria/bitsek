@@ -27,7 +27,7 @@ import Data.ByteString.Conversion
 data User = User { adress :: String
                  , privateKey :: String 
                  , balance :: Int 
-                 } deriving (Show)
+                 } deriving (Show, Read)
 
 {-  Transaction
     Transaction with a sender, receiver and amount.
@@ -35,7 +35,7 @@ data User = User { adress :: String
 data Transaction = Transaction { sender :: User
                                , receiver :: User
                                , amount :: Int
-                               } deriving (Show)
+                               } deriving (Show, Read)
 
 {-  Block
     A block with the following information:
@@ -48,14 +48,14 @@ data Block = Block { index :: Int
                    , transactions :: [Transaction]
                    , proof :: Int
                    , previousHash :: String
-                   } deriving (Show)
+                   } deriving (Show, Read)
 
 {-  Blockchain
     Represents a list of blocks.
     INVARIANT: The latest mined block has to be the head of the list of blocks.
 
 -}
-data Blockchain = Blockchain [Block] deriving (Show)
+data Blockchain = Blockchain [Block] deriving (Show, Read)
 
 --------------------------
 -- BLOCKCHAIN FUNCTIONS --
@@ -121,12 +121,6 @@ newBlock blockchain block = Block newIndex newTransactions proof previousHash
 mineBlock :: Block -> (String, Int)
 mineBlock block = mineBlockAux block 0
 
-{-  mineBlockAux block nonce
-    Checks if the combined hash of block and a nonce starts with three 0's - if not, it tries with (nonce + 1).
-    RETURNS: Tuple with combined hash that starts with three 0's of block and nonce, and the nonce.
-    EXAMPLES: mineBlockAux testBlock1 0 = ("00035fee66451dbc750d037bec5c5cb6e7f5e17c6a721e34db2de8be92d9dd1a",2719)
-              mineBlockAux testBlock1 2720 = ("000c00bb3592de90a0cda8a495e01df35f0a0fd93327190b9dedf1d1ef765a0f",5670)
--}
 mineBlockAux :: Block -> Int -> (String, Int)
 mineBlockAux block nonce
     | head hashResult == '0' 
@@ -137,11 +131,7 @@ mineBlockAux block nonce
         where
             hashResult = hashBlock block nonce
 
-{-  hashBlock block nonce
-    Takes a block and a nonce and hashes it with SHA256.
-    RETURNS: Hash of nonce, and the transactions and previousHash in block.
-    EXAMPLE: hashBlock testBlock1 0 = "24d7f209983efe43e31af70e822d73f163853eb6f5a12cf90637098113bf75f4"
--}
+
 hashBlock :: Block -> Int -> String
 hashBlock block nonce = show $ hashWith SHA256 $ toByteString' $ (show nonce ++ previousHash block ++ transactionsToString block)
 
