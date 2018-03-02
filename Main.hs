@@ -12,8 +12,9 @@ main :: IO b
 main = do 
     let initpb = (Block 0 [] 0 "")
     bc <- readFile "blockchain.txt"
-    let initus = [fabbe, benne, hogge, dave]
+    us <- readFile "users.txt"
     let initbc = read bc :: Blockchain
+    let initus = read us :: [User]
     program (initpb, initbc, initus)
 
 
@@ -33,14 +34,15 @@ program (pb, bc, us) = do
         "show" -> printTransactions (pb, bc, us)
         "new" -> createUser (pb, bc, us)
         "list" -> printUsers (pb, bc, us)
-        "q" -> exitProgram bc
+        "q" -> exitProgram (bc, us)
         _ -> do 
             putStrLn "Invalid command. Press enter to try again."
             getChar
             program (pb, bc, us)
 
-exitProgram bc = do
-    writeFile "newBlockchain.txt" (show bc)
+exitProgram (bc, us) = do
+    writeFile "blockchain.txt" (show bc)
+    writeFile "users.txt" (show us)
     exitWith ExitSuccess
 
 {- menu 
